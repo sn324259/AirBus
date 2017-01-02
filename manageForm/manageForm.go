@@ -517,9 +517,17 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 	if res.FAA_FormNumber == FAA_formNumber{
 		fmt.Println("Form found with FAA_formNumber : " + FAA_formNumber)
 		fmt.Println(res);
-		if(quantity > res.Total_approvedQty){
-			return nil,errors.New("Quantity should be less than Total Approved Quantity")
-		}
+		qty,err := strconv.Atoi(quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'quantity' to int ")
+	}
+	approvedQty,err := strconv.Atoi(res.Total_approvedQty)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+	}
+	if(qty > approvedQty){
+		return nil,errors.New("Quantity should be less than Total Approved Quantity")
+	}
 		res.Quantity = quantity
 	}
 	
@@ -591,7 +599,15 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 	approvalDate	:= args[7]
 	authorization_number := args[8]
 	userType := "Tier-3"	
-	if(quantity > total_approvedQty){
+	qty,err := strconv.Atoi(quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'quantity' to int ")
+	}
+	approvedQty,err := strconv.Atoi(total_approvedQty)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+	}
+	if(qty > approvedQty){
 		return nil,errors.New("Quantity should be less than Total Approved Quantity")
 	}	
 	FormAsBytes, err := stub.GetState(FAA_formNumber) // need to ask use FAA_formNumber or formid
@@ -709,7 +725,15 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	tier3_Form_number := args[9]
 	userType := "Tier-2"
 
-	if(quantity > total_approvedQty){
+	qty,err := strconv.Atoi(quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'quantity' to int ")
+	}
+	approvedQty,err := strconv.Atoi(total_approvedQty)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+	}
+	if(qty > approvedQty){
 		return nil,errors.New("Quantity should be less than Total Approved Quantity")
 	}
 
@@ -829,7 +853,15 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	tier2_Form_number := args[9]
 	userType := "Tier-1"
 
-	if(quantity > total_approvedQty){
+	qty,err := strconv.Atoi(quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'quantity' to int ")
+	}
+	approvedQty,err := strconv.Atoi(total_approvedQty)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+	}
+	if(qty > approvedQty){
 		return nil,errors.New("Quantity should be less than Total Approved Quantity")
 	}
 		
@@ -948,8 +980,16 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	authorization_number := args[8]
 	tier1_Form_number := args[9]
 	userType := "OEM"
-
-	if(quantity > total_approvedQty){
+	
+	qty,err := strconv.Atoi(quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'quantity' to int ")
+	}
+	approvedQty,err := strconv.Atoi(total_approvedQty)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+	}
+	if(qty > approvedQty){
 		return nil,errors.New("Quantity should be less than Total Approved Quantity")
 	}
 		
