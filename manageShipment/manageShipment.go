@@ -22,6 +22,7 @@ package main
 import (
 "errors"
 "fmt"
+"../manageForm/manageForm"
 "strconv"
 "encoding/json"
 
@@ -322,7 +323,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
-		`"status": "` + res.Status + `"`+ 
+		`"status": "` + res.Status + `"`+total_approvedQty 
 	    `}`
 	
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
@@ -369,17 +370,34 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	shipmentDate := args[6]
 	status := "Created"
 		
-	/*qty,err := strconv.Atoi(quantity)
+	valAsBytes,err := getForm_byID(FAA_formNumber)
+	if err != nil {
+		return nil, errors.New("Error while getting available quantity from form")
+	}
+	fmt.Print("valueAsBytes : ")
+	fmt.Println(valueAsBytes)
+	json.Unmarshal(valueAsBytes, &valIndex)
+	fmt.Print("valIndex: ")
+	fmt.Print(valIndex)
+	qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
 	}
-	approvedQty,err := strconv.Atoi(total_approvedQty)
+	// Fetch quantity from form
+	formQty,err := strconv.Atoi(valIndex.Quantity)
+	if err != nil {
+		return nil, errors.New("Error while converting string 'form quantity' to int ")
+	}
+	// Fetch Total approved quantity from form
+	approvedQty,err := strconv.Atoi(valIndex.Total_approvedQty)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'approvedQty' to int ")
 	}
-	if(qty > approvedQty){
-		return nil,errors.New("Quantity should be less than Total Approved Quantity")
-	}	*/
+	// calculate available quantity
+	availableQty := approvedQty - formQty
+	if(qty > availableQty){
+		return nil,errors.New("Quantity should be less than available Quantity")
+	}	
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
 		return nil, errors.New("Failed to get Shipment ID")
