@@ -58,8 +58,10 @@ type Shipment struct{
 
 	ShipmentID string `json:"shipmentId"`
 	Description string `json:"description"`
-	Sender string `json:"sender"`					
+	Sender string `json:"sender"`
+	SenderType string `json:"senderType"`		
 	Receiver string `json:"receiver"`
+	ReceiverType string `json:"receiverType"`
 	FAA_FormNumber string `json:"FAA_formNumber"`	
 	Quantity string `json:"quantity"`
 	ShipmentDate string `json:"shipmentDate"`	
@@ -337,13 +339,15 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"shipmentId": "` + res.ShipmentID + `" , `+
 		`"description": "` + res.Description + `" , `+ 
 		`"sender": "` + res.Sender + `" , `+
+		`"senderType": "` + res.SenderType + `" , `+
 		`"receiver": "` + res.Receiver + `" , `+
+		`"receiverType": "` + res.ReceiverType + `" , `+
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
 		`"status": "` + res.Status + `"`+ 
 	    `}`
-	
+		
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
 	if err != nil {
 		return nil, err
@@ -358,7 +362,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
 	var err error
 	var valIndex Form
-	if len(args) != 8 {
+	if len(args) != 10 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 8")
 	}
 	fmt.Println("Creating a new Shipment")
@@ -380,16 +384,44 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if len(args[5]) <= 0 {
 		return nil, errors.New("6th argument must be a non-empty string")
 	}
+	if len(args[6]) <= 0 {
+		return nil, errors.New("7th argument must be a non-empty string")
+	}
+	if len(args[7]) <= 0 {
+		return nil, errors.New("8th argument must be a non-empty string")
+	}
+	if len(args[8]) <= 0 {
+		return nil, errors.New("9th argument must be a non-empty string")
+	}
+	if len(args[9]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	
 	shipmentId := args[0]
 	description := args[1]
 	sender := args[2]
-	receiver := args[3] 
-	FAA_formNumber := args[4]
-	quantity := args[5]
-	shipmentDate := args[6]
+	senderType := args[3]
+	receiver := args[4] 
+	receiverType := args[5] 
+	FAA_formNumber := args[6]
+	quantity := args[7]
+	shipmentDate := args[8]
 	status := "Created"
-		
-	chaincodeURL := args[7]
+	chaincodeURL := args[9]
+	// Adding Rule for senderType and receiverType
+	if(senderType == "Tier-3" || receiverType == "Tier-2"){
+		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
+	}else if(senderType == "Tier-2" || receiverType == "Tier-1"){
+		return nil,errors.New("Tier-2 can send shipment to Tier-1 only")
+	}else if(senderType == "Tier-1" || receiverType == "OEM"){
+		return nil,errors.New("Tier-1 can send shipment to OEM only")
+	}
+	fmt.Print("senderType: ")
+	fmt.Println(senderType)
+	fmt.Print("receiverType: ")
+	fmt.Println(receiverType)
+
+	// calculating available quantity by fetching total approved quantity and quantity from 'manageForm' chaincode
 	f := "getForm_byID"
 	queryArgs := util.ToChaincodeArgs(f, FAA_formNumber)
 	valueAsBytes, err := stub.QueryChaincode(chaincodeURL, queryArgs)
@@ -418,17 +450,16 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Error while converting string 'approvedQty' to int ")
 	}
-	// calculate available quantity
-	availableQty := approvedQty - formQty
-	if(qty > availableQty){
-		return nil,errors.New("Quantity should be less than available Quantity")
+	
+	//Quantity for shipment cannot be more than “total approved quantity”
+	if(qty >=approvedQty){
+		return nil,errors.New("Quantity should be less than Total Approved Quantity")
 	}	
-	fmt.Print("availableQty : ")
-	fmt.Println(availableQty)
 	fmt.Print("approvedQty : ")
 	fmt.Println(approvedQty)
 	fmt.Print("formQty : ")
 	fmt.Println(formQty)
+	// fetching shipments from chaincode
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
 		return nil, errors.New("Failed to get Shipment ID")
@@ -439,10 +470,34 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	json.Unmarshal(ShipmentAsBytes, &res)
 	fmt.Print("res: ")
 	fmt.Println(res)
+
+	// calculate available quantity
+	availableQty := approvedQty - formQty
+	fmt.Print("availableQty : ")
+	fmt.Println(availableQty)
+	// Multiple shipments can be created for one Form as long as quantity is available
+	if res.FAA_FormNumber == FAA_formNumber{
+		fmt.Println("Shipments are already created for this form : " + FAA_formNumber)
+		fmt.Println(res);
+		if(qty >= availableQty){
+			return nil,errors.New("Quantity should be less than available Quantity")
+		}
+	}
+	// Checking for already created shipments
 	if res.ShipmentID == shipmentId{
 		fmt.Println("This Shipment already exists: " + shipmentId)
 		fmt.Println(res);
 		return nil, errors.New("This Shipment already exists")				//all stop a Shipment by this name exists
+	}
+	// New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status
+	if(res.Status != "Created" && senderType == "Tier-2" || senderType == "Tier-1" || senderType == "OEM"){
+		fmt.Println("New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status")
+		return nil,errors.New("New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status.")
+	}
+	// Shipments marked “Consumed” cannot be used for creating new Forms
+	if res.Status == "Consumed"{
+		fmt.Println("This Shipment is already consumed. New form cannot be created")
+		return nil,errors.New("New form cannot be created as this Shipment is already consumed.")
 	}
 	
 	//build the Shipment json string manually
@@ -450,15 +505,17 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		`"shipmentId": "` + shipmentId + `" , `+
 		`"description": "` + description + `" , `+ 
 		`"sender": "` + sender + `" , `+
+		`"senderType": "` + senderType + `" , `+
 		`"receiver": "` + receiver + `" , `+
+		`"receiverType": "` + receiverType + `" , `+
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"shipmentDate": "` + shipmentDate + `" , `+ 
 		`"status": "` + status + `"`+ 
 	    `}`
-		fmt.Println("input: " + input)
-		fmt.Print("input in bytes array: ")
-		fmt.Println([]byte(input))
+	fmt.Println("input: " + input)
+	fmt.Print("input in bytes array: ")
+	fmt.Println([]byte(input))
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with FAA_FormNumber as key
 	if err != nil {
 		return nil, err
@@ -487,5 +544,19 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	}
 
 	fmt.Println("Shipment created successfully.")
+	// calculate quantity left after shipment creation
+	remainingQty := formQty - qty
+	// Forms should be updated to reflect the actual quantity left after shipment
+	function := "update_Form"
+	invokeArgs := util.ToChaincodeArgs(function, FAA_formNumber,string(remainingQty))
+	valAsBytes, err := stub.InvokeChaincode(chaincodeURL, invokeArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	}
+	fmt.Print("valAsBytes : ")
+	fmt.Println(valAsBytes)
+	fmt.Printf("Form updated successfully after successful Shipment creation.")
 	return nil, nil
 }
