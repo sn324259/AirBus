@@ -374,7 +374,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	chaincodeURL := args[7]
 	f := "getForm_byID"
 	queryArgs := util.ToChaincodeArgs(f, FAA_formNumber)
-	valueAsBytes, err := stub.InvokeChaincode(chaincodeURL, queryArgs)
+	valueAsBytes, err := stub.QueryChaincode(chaincodeURL, queryArgs)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
 		fmt.Printf(errStr)
