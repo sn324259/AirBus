@@ -423,6 +423,12 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if(qty > availableQty){
 		return nil,errors.New("Quantity should be less than available Quantity")
 	}	
+	fmt.Print("availableQty : ")
+	fmt.Println(availableQty)
+	fmt.Print("approvedQty : ")
+	fmt.Println(approvedQty)
+	fmt.Print("formQty : ")
+	fmt.Println(formQty)
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
 		return nil, errors.New("Failed to get Shipment ID")
