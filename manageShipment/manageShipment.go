@@ -22,11 +22,11 @@ package main
 import (
 "errors"
 "fmt"
-"../manageForm/manageForm"
 "strconv"
 "encoding/json"
 
 "github.com/hyperledger/fabric/core/chaincode/shim"
+"github.com/hyperledger/fabric/core/util"
 )
 
 // ManageShipment example simple Chaincode implementation
@@ -323,7 +323,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
-		`"status": "` + res.Status + `"`+total_approvedQty 
+		`"status": "` + res.Status + `"`+ 
 	    `}`
 	
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
@@ -339,8 +339,9 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
 	var err error
-	if len(args) != 7 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 7")
+	var valIndex []string
+	if len(args) != 8 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 8")
 	}
 	fmt.Println("Creating a new Shipment")
 	if len(args[0]) <= 0 {
@@ -370,16 +371,21 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	shipmentDate := args[6]
 	status := "Created"
 		
-	valAsBytes,err := getForm_byID(FAA_formNumber)
+	chaincodeURL := args[7]
+	f := "getForm_byID"
+	queryArgs := util.ToChaincodeArgs(f, FAA_formNumber)
+	valueAsBytes, err := stub.InvokeChaincode(chaincodeURL, queryArgs)
 	if err != nil {
-		return nil, errors.New("Error while getting available quantity from form")
-	}
+		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 	
 	fmt.Print("valueAsBytes : ")
 	fmt.Println(valueAsBytes)
 	json.Unmarshal(valueAsBytes, &valIndex)
 	fmt.Print("valIndex: ")
 	fmt.Print(valIndex)
-	qty,err := strconv.Atoi(quantity)
+	/*qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
 	}
@@ -397,7 +403,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	availableQty := approvedQty - formQty
 	if(qty > availableQty){
 		return nil,errors.New("Quantity should be less than available Quantity")
-	}	
+	}	*/
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
 		return nil, errors.New("Failed to get Shipment ID")
