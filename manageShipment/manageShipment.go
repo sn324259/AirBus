@@ -35,6 +35,24 @@ type ManageShipment struct {
 
 var ShipmentIndexStr = "_Shipmentindex"				//name for the key/value that will store a list of all known Shipments
 
+type Form struct{
+								// Attributes of a Form 
+	FAA_FormNumber string `json:"FAA_formNumber"`	
+	Quantity string `json:"quantity"`
+	FAA_FormURL string `json:"FAA_formUrl"`
+	User string `json:"user"`					
+	ItemType string `json:"itemType"`
+	Part_number string `json:"part_number"`
+	Total_approvedQty string `json:"total_approvedQty"`
+	ApprovalDate string `json:"approvalDate"`	
+	Authorization_number string `json:"authorization_number"`
+	Tier3_Form_number string `json:"tier3_Form_number"`
+	Tier2_Form_number string `json:"tier2_Form_number"`
+	Tier1_Form_number string `json:"tier1_Form_number"`
+	UserType string `json:"userType"`
+
+}
+
 type Shipment struct{
 								// Attributes of a Shipment 
 
@@ -339,7 +357,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
 	var err error
-	var valIndex []string
+	var valIndex Form
 	if len(args) != 8 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 8")
 	}
