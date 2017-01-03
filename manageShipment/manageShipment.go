@@ -404,7 +404,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	fmt.Print("valIndex: ")
 	fmt.Println(valIndex)
 	
-	/*qty,err := strconv.Atoi(quantity)
+	qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
 	}
@@ -422,7 +422,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	availableQty := approvedQty - formQty
 	if(qty > availableQty){
 		return nil,errors.New("Quantity should be less than available Quantity")
-	}	*/
+	}	
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
 		return nil, errors.New("Failed to get Shipment ID")
