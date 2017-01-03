@@ -384,7 +384,26 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	fmt.Println(valueAsBytes)
 	json.Unmarshal(valueAsBytes, &valIndex)
 	fmt.Print("valIndex: ")
-	fmt.Print(valIndex)
+	fmt.Println(valIndex)
+	jsonResp := "{"
+	for i,val := range valIndex{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for fetching form byID")
+		valAsBytes, err := stub.GetState(val)
+		if err != nil {
+			errResp := "{\"Error\":\"Failed to get state for " + val + "\"}"
+			return nil, errors.New(errResp)
+		}
+		fmt.Print("valAsBytes : ")
+		fmt.Println(valAsBytes)
+		jsonResp = jsonResp + "\""+ val + "\":" + string(valAsBytes[:])
+		if i < len(valIndex)-1 {
+			jsonResp = jsonResp + ","
+		}
+	}
+	fmt.Println("len(valIndex) : ")
+	fmt.Println(len(valIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
 	/*qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
