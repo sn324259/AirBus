@@ -173,7 +173,7 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 	} 
 
 	fmt.Println("query did not find func: " + function)				//error
-	jsonResp := "Error : Received unknown function quersdasy: "+ function 
+	jsonResp := "Error : Received unknown function query: "+ function 
 	return nil, errors.New(jsonResp)
 }
 // ============================================================================================================================
@@ -625,7 +625,7 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 		return nil, errors.New("{\"Error\":\"Error while converting string 'approvedQty' to int \"}")
 	}
 	if(qty > approvedQty){
-		jsonResp := "{\"Error\":\"Quantity should be less than Total Approved Quantity\"}"
+		jsonResp := "Error: Quantity should be less than Total Approved Quantity"
 		return nil,errors.New(jsonResp)
 	}	
 		
