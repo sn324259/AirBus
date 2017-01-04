@@ -388,7 +388,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	var err error
 	var valIndex Form
 	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 8")
+		return nil, errors.New("Incorrect number of arguments. Expecting 10")
 	}
 	fmt.Println("Creating a new Shipment")
 	if len(args[0]) <= 0 {
@@ -465,11 +465,15 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
 	}
+	fmt.Print("qty: ")
+	fmt.Println(qty)
 	// Fetch quantity from form
 	formQty,err := strconv.Atoi(valIndex.Quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'form quantity' to int ")
 	}
+	fmt.Print("formQty: ")
+	fmt.Println(formQty)
 	// Fetch Total approved quantity from form
 	/*approvedQty,err := strconv.Atoi(valIndex.Total_approvedQty)
 	if err != nil {
