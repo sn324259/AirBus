@@ -26,6 +26,7 @@ import (
 "encoding/json"
 
 "github.com/hyperledger/fabric/core/chaincode/shim"
+"github.com/hyperledger/fabric/core/util"
 )
 
 // ManageForm example simple Chaincode implementation
@@ -53,6 +54,21 @@ type Form struct{
 	Tier1_Form_number string `json:"tier1_Form_number"`
 	UserType string `json:"userType"`
 
+}
+type Shipment struct{
+								// Attributes of a Shipment 
+
+	ShipmentID string `json:"shipmentId"`
+	Description string `json:"description"`
+	Sender string `json:"sender"`
+	SenderType string `json:"senderType"`		
+	Receiver string `json:"receiver"`
+	ReceiverType string `json:"receiverType"`
+	FAA_FormNumber string `json:"FAA_formNumber"`	
+	Quantity string `json:"quantity"`
+	ShipmentDate string `json:"shipmentDate"`	
+	ReceivedDate string `json:"receivedDate"`
+	Status string `json:"status"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for Form management
@@ -166,7 +182,7 @@ func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args []strin
 	//getForm_byID('FAA_formNumber')
 	var FAA_formNumber, jsonResp string
 	var err error
-	fmt.Println("Fetching Form by ID/FAA_formNumber")
+	fmt.Println("Fetching Form by FAA_formNumber")
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
 	}
@@ -179,7 +195,7 @@ func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args []strin
 	}
 	fmt.Print("valAsbytes : ")
 	fmt.Println(valAsbytes)
-	fmt.Println("Fetched Form by ID")
+	fmt.Println("Fetched Form by FAA_formNumber")
 	return valAsbytes, nil													//send it onward
 }
 // ============================================================================================================================
@@ -518,16 +534,16 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		fmt.Println("Form found with FAA_formNumber : " + FAA_formNumber)
 		fmt.Println(res);
 		qty,err := strconv.Atoi(quantity)
-	if err != nil {
-		return nil, errors.New("Error while converting string 'quantity' to int ")
-	}
-	approvedQty,err := strconv.Atoi(res.Total_approvedQty)
-	if err != nil {
-		return nil, errors.New("Error while converting string 'approvedQty' to int ")
-	}
-	if(qty > approvedQty){
-		return nil,errors.New("Quantity should be less than Total Approved Quantity")
-	}
+		if err != nil {
+			return nil, errors.New("Error while converting string 'quantity' to int ")
+		}
+		approvedQty,err := strconv.Atoi(res.Total_approvedQty)
+		if err != nil {
+			return nil, errors.New("Error while converting string 'approvedQty' to int ")
+		}
+		if(qty > approvedQty){
+			return nil,errors.New("Quantity should be less than Total Approved Quantity")
+		}
 		res.Quantity = quantity
 	}
 	
@@ -677,8 +693,9 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	var valIndex Shipment
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for Tier-2")
 	if len(args[0]) <= 0 {
@@ -711,6 +728,12 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
 	
 	
 	FAA_formNumber := args[0]
@@ -723,7 +746,26 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	approvalDate	:= args[7]
 	authorization_number := args[8]
 	tier3_Form_number := args[9]
+	shipmentId := args[10]
 	userType := "Tier-2"
+	chaincodeURL := args[11]
+	// Fetching shipment status from 'manageShipment' chaincode
+	f := "getShipment_byId"
+	queryArgs := util.ToChaincodeArgs(f, shipmentId)
+	valueAsBytes, err := stub.QueryChaincode(chaincodeURL, queryArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 	
+	json.Unmarshal(valueAsBytes, &valIndex)
+	shipmentStatus := valIndex.Status;
+
+	// New Form for Tier-2 can only be created from received forms with “Created” status
+	if(shipmentStatus != "Created"){
+		fmt.Println("New Form for Tier-2 can only be created from received forms with “Created” status")
+		return nil,errors.New("New Form for Tier-2 can only be created from received forms with “Created” status.")
+	}
 
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
@@ -798,6 +840,17 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	fmt.Println("Tier-2 Form created successfully.")
+
+	// Update shipment status of the shipmentId from 'manageForm' chaincode
+	function := "updateShipment"
+	invokeArgs := util.ToChaincodeArgs(function, shipmentId)
+	result, err := stub.InvokeChaincode(chaincodeURL, invokeArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to update shipment status from 'manageForm' chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 
+	fmt.Sprintf("Shipment status updated successfully. Transaction hash : %s",result)
 	return nil, nil
 }
 // ============================================================================================================================
@@ -805,8 +858,10 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	var valIndex Shipment
+	var formIndex Form
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for Tier-1")
 	if len(args[0]) <= 0 {
@@ -839,6 +894,12 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
 	
 	
 	FAA_formNumber := args[0] // FAA_formNumber or FAA_formNumberber
@@ -851,7 +912,38 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	approvalDate	:= args[7]
 	authorization_number := args[8]
 	tier2_Form_number := args[9]
+	shipmentId := args[10]
 	userType := "Tier-1"
+	chaincodeURL := args[11]
+	// Fetching shipment status from 'manageShipment' chaincode
+	f := "getShipment_byId"
+	queryArgs := util.ToChaincodeArgs(f, shipmentId)
+	valueAsBytes, err := stub.QueryChaincode(chaincodeURL, queryArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 	
+	json.Unmarshal(valueAsBytes, &valIndex)
+	shipmentStatus := valIndex.Status;
+	
+	// New Form for Tier-1 can only be created from received forms with “Created” status
+	if(shipmentStatus != "Created"){
+		fmt.Println("New Form for Tier-1 can only be created from received forms with “Created” status")
+		return nil,errors.New("New Form for Tier-1 can only be created from received forms with “Created” status.")
+	}
+
+	var formArgs []string
+	formArgs[0]=tier2_Form_number 
+	//  Tier-1 Form should be updated with Tier-3 Form number 
+
+	formAsbytes,err := t.getForm_byID(stub,formArgs);
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get all OEM forms\"}"
+		return nil, errors.New(jsonResp)
+	}
+	json.Unmarshal(formAsbytes, &formIndex)
+	tier3_Form_number := formIndex.Tier3_Form_number
 
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
@@ -893,6 +985,7 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 		`"approvalDate": "` + approvalDate + `" , `+ 	
 		`"authorization_number": "` + authorization_number + `" , `+ 
 		`"tier2_Form_number": "` + tier2_Form_number + `" , `+
+		`"tier3_Form_number": "` + tier3_Form_number + `" , `+
 		`"userType": "` + userType + `"`+    
 		`}`
 		fmt.Println("input: " + input)
@@ -926,6 +1019,17 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	fmt.Println("Tier-1 Form created successfully.")
+
+	// Update shipment status of the shipmentId from 'manageForm' chaincode
+	function := "updateShipment"
+	invokeArgs := util.ToChaincodeArgs(function, shipmentId)
+	result, err := stub.InvokeChaincode(chaincodeURL, invokeArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to update shipment status from 'manageForm' chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 
+	fmt.Sprintf("Shipment status updated successfully. Transaction hash : %s",result)
 	return nil, nil
 }
 // ============================================================================================================================
@@ -933,8 +1037,10 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 // ============================================================================================================================
 func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	var valIndex Shipment
+	var	formIndex Form
+	if len(args) != 11 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 11")
 	}
 	fmt.Println("Creating a new Form for OEM")
 	if len(args[0]) <= 0 {
@@ -967,7 +1073,12 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
-	
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
 	
 	FAA_formNumber := args[0]
 	quantity := args[1]
@@ -979,8 +1090,40 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	approvalDate	:= args[7]
 	authorization_number := args[8]
 	tier1_Form_number := args[9]
+	shipmentId := args[10]
 	userType := "OEM"
+	chaincodeURL := args[11]
+	// Fetching shipment status from 'manageShipment' chaincode
+	f := "getShipment_byId"
+	queryArgs := util.ToChaincodeArgs(f, shipmentId)
+	valueAsBytes, err := stub.QueryChaincode(chaincodeURL, queryArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 	
+	json.Unmarshal(valueAsBytes, &valIndex)
+	shipmentStatus := valIndex.Status;
 	
+	// New Form for OEM can only be created from received forms with “Created” status
+	if(shipmentStatus != "Created"){
+		fmt.Println("New Form for OEM can only be created from received forms with “Created” status")
+		return nil,errors.New("New Form for OEM can only be created from received forms with “Created” status.")
+	}
+	var formArgs []string
+	formArgs[0]=tier1_Form_number 
+	//  OEM Form should be updated with tier-2 Form number 
+
+	formAsbytes,err := t.getForm_byID(stub,formArgs);
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get form by tier1_Form_number\"}"
+		return nil, errors.New(jsonResp)
+	}
+	json.Unmarshal(formAsbytes, &formIndex)
+	tier2_Form_number := formIndex.Tier2_Form_number
+	tier3_Form_number := formIndex.Tier3_Form_number
+
+
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
@@ -1021,6 +1164,8 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 		`"approvalDate": "` + approvalDate + `" , `+ 	
 		`"authorization_number": "` + authorization_number + `" , `+ 
 		`"tier1_Form_number": "` + tier1_Form_number + `" , `+
+		`"tier2_Form_number": "` + tier2_Form_number + `" , `+
+		`"tier3_Form_number": "` + tier3_Form_number + `" , `+
 		`"userType": "` + userType + `"`+
 		`}`
 		fmt.Println("input: " + input)
@@ -1054,5 +1199,15 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	fmt.Println("OEM Form created successfully.")
+	// Update shipment status of the shipmentId from 'manageForm' chaincode
+	function := "updateShipment"
+	invokeArgs := util.ToChaincodeArgs(function, shipmentId)
+	result, err := stub.InvokeChaincode(chaincodeURL, invokeArgs)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to update shipment status from 'manageForm' chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return nil, errors.New(errStr)
+	} 
+	fmt.Sprintf("Shipment status updated successfully. Transaction hash : %s",result)
 	return nil, nil
 }
