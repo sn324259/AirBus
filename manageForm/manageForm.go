@@ -523,6 +523,8 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 	// set FAA_formNumber
 	FAA_formNumber := args[0]
 	quantity := args[1]
+	fmt.Print("quantity")
+	fmt.Println(quantity);
 	FormAsBytes, err := stub.GetState(FAA_formNumber)									//get the Form for the specified FormId from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + FAA_formNumber + "\"}"
