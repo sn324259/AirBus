@@ -173,7 +173,7 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 	} 
 
 	fmt.Println("query did not find func: " + function)				//error
-	jsonResp := "{\"Error\":\"Received unknown function quersdasy: "+ function +"\"}"
+	jsonResp := "Error : Received unknown function quersdasy: "+ function 
 	return nil, errors.New(jsonResp)
 }
 // ============================================================================================================================
