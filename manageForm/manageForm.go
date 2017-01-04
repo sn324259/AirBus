@@ -154,8 +154,9 @@ func (t *ManageForm) Invoke(stub shim.ChaincodeStubInterface, function string, a
 	}else if function == "update_Form" {									//update a Form
 		return t.update_Form(stub, args)
 	}
-	fmt.Println("invoke did not find func: " + function)					//error
-	return nil, errors.New("Received unknown function invocation")
+	fmt.Println("invoke did not find func: " + function)	
+	jsonResp := "Error : Received unknown function invocation: "+ function 				//error
+	return nil, errors.New(jsonResp)
 }
 // ============================================================================================================================
 // Query - Our entry Formint for Queries
