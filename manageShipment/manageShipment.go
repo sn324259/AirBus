@@ -142,10 +142,35 @@ func (t *ManageShipment) Query(stub shim.ChaincodeStubInterface, function string
 		return t.getShipment_bySender(stub, args)
 	} else if function == "get_AllShipment" {													//Read all Shipments
 		return t.get_AllShipment(stub, args)
-	} 
+	}else if function == "getShipment_byId" {													//Read a Shipment by Buyer
+		return t.getShipment_byId(stub, args)
+	}
 
 	fmt.Println("query did not find func: " + function)						//error
 	return nil, errors.New("Received unknown function query")
+}
+// ============================================================================================================================
+//  getShipment_byId - get Shipment details by Shipment ID from chaincode state
+// ============================================================================================================================
+func (t *ManageShipment) getShipment_byId(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	//getForm_byID('shipmentId')
+	var shipmentId, jsonResp string
+	var err error
+	fmt.Println("Fetching shipment Form by shipmentId")
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting ID of the shipment to query")
+	}
+	// set shipmentId
+	shipmentId = args[0]
+	valAsbytes, err := stub.GetState(shipmentId)									//get the shipmentId from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + shipmentId + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	fmt.Print("valAsbytes : ")
+	fmt.Println(valAsbytes)
+	fmt.Println("Fetched Form by shipmentId")
+	return valAsbytes, nil	
 }
 // ============================================================================================================================
 //  getShipment_byReceiver - get Shipment details by Receiver from chaincode state
@@ -409,11 +434,11 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	status := "Created"
 	chaincodeURL := args[9]
 	// Adding Rule for senderType and receiverType
-	if(senderType == "Tier-3" || receiverType == "Tier-2"){
+	if(senderType == "Tier-3" || receiverType != "Tier-2"){
 		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
-	}else if(senderType == "Tier-2" || receiverType == "Tier-1"){
+	}else if(senderType == "Tier-2" || receiverType != "Tier-1"){
 		return nil,errors.New("Tier-2 can send shipment to Tier-1 only")
-	}else if(senderType == "Tier-1" || receiverType == "OEM"){
+	}else if(senderType == "Tier-1" || receiverType != "OEM"){
 		return nil,errors.New("Tier-1 can send shipment to OEM only")
 	}
 	fmt.Print("senderType: ")
@@ -446,19 +471,16 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		return nil, errors.New("Error while converting string 'form quantity' to int ")
 	}
 	// Fetch Total approved quantity from form
-	approvedQty,err := strconv.Atoi(valIndex.Total_approvedQty)
+	/*approvedQty,err := strconv.Atoi(valIndex.Total_approvedQty)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'approvedQty' to int ")
-	}
+	}*/
 	
-	//Quantity for shipment cannot be more than “total approved quantity”
-	if(qty >=approvedQty){
-		return nil,errors.New("Quantity should be less than Total Approved Quantity")
+	//Shipped quantity cannot be greater than Form’s quantity
+	if(qty >=formQty){
+		return nil,errors.New("Shipped quantity cannot be greater than Form’s quantity")
 	}	
-	fmt.Print("approvedQty : ")
-	fmt.Println(approvedQty)
-	fmt.Print("formQty : ")
-	fmt.Println(formQty)
+
 	// fetching shipments from chaincode
 	ShipmentAsBytes, err := stub.GetState(shipmentId) 
 	if err != nil {
@@ -471,29 +493,20 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	fmt.Print("res: ")
 	fmt.Println(res)
 
-	// calculate available quantity
+	/*// calculate available quantity
 	availableQty := approvedQty - formQty
 	fmt.Print("availableQty : ")
-	fmt.Println(availableQty)
+	fmt.Println(availableQty)*/
 	// Multiple shipments can be created for one Form as long as quantity is available
-	if res.FAA_FormNumber == FAA_formNumber{
+	/*if res.FAA_FormNumber == FAA_formNumber{
 		fmt.Println("Shipments are already created for this form : " + FAA_formNumber)
 		fmt.Println(res);
 		if(qty >= availableQty){
 			return nil,errors.New("Quantity should be less than available Quantity")
 		}
-	}
-	// Checking for already created shipments
-	if res.ShipmentID == shipmentId{
-		fmt.Println("This Shipment already exists: " + shipmentId)
-		fmt.Println(res);
-		return nil, errors.New("This Shipment already exists")				//all stop a Shipment by this name exists
-	}
-	// New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status
-	if(res.Status != "Created" && senderType == "Tier-2" || senderType == "Tier-1" || senderType == "OEM"){
-		fmt.Println("New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status")
-		return nil,errors.New("New Form for Tier-2, Tier-1 and OEM can only be created from received forms with “Created” status.")
-	}
+	}*/
+	
+	
 	// Shipments marked “Consumed” cannot be used for creating new Forms
 	if res.Status == "Consumed"{
 		fmt.Println("This Shipment is already consumed. New form cannot be created")
