@@ -621,27 +621,12 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 	}
 	approvedQty,err := strconv.Atoi(total_approvedQty)
 	if err != nil {
-		return nil, errors.New("Error while converting string 'approvedQty' to int ")
+		return nil, errors.New("{\"Error\":\"Error while converting string 'approvedQty' to int \"}")
 	}
 	if(qty > approvedQty){
-		return nil,errors.New("Quantity should be less than Total Approved Quantity")
+		return nil,errors.New("{\"Error\":\"Quantity should be less than Total Approved Quantity\"}")
 	}	
-	FormAsBytes, err := stub.GetState(FAA_formNumber) // need to ask use FAA_formNumber or formid
-	if err != nil {
-		return nil, errors.New("Failed to get Form FAA_formNumber")
-	}
-	fmt.Print("FormAsBytes: ")
-	fmt.Println(FormAsBytes)
-	res := Form{}
-	json.Unmarshal(FormAsBytes, &res)
-	fmt.Print("res: ")
-	fmt.Println(res)
-	if res.FAA_FormNumber == FAA_formNumber{
-		fmt.Println("This Form arleady exists: " + FAA_formNumber)
-		fmt.Println(res);
-		return nil, errors.New("This Form arleady exists")				//all stop a Form by this name exists
-	}
-	
+		
 	//build the Form json string manually
 	input := 	`{`+
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
