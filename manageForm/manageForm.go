@@ -173,7 +173,7 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 	} 
 
 	fmt.Println("query did not find func: " + function)						//error
-	return nil, errors.New("Received unknown function query")
+	return nil, errors.New("{\"Error\":\"Received unknown function query\"}")
 }
 // ============================================================================================================================
 // getForm_byID - get Form details for a specific FormID from chaincode state
