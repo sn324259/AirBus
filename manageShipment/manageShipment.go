@@ -563,10 +563,14 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 
 	fmt.Println("Shipment created successfully.")
 	// calculate quantity left after shipment creation
-	remainingQty := formQty - qty
+	var remainingQty int
+	remainingQty = formQty - qty
+
+	fmt.Print("remainingQty : ")
+	fmt.Println(remainingQty)
 	// Forms should be updated to reflect the actual quantity left after shipment
 	function := "update_Form"
-	invokeArgs := util.ToChaincodeArgs(function, FAA_formNumber,string(remainingQty))
+	invokeArgs := util.ToChaincodeArgs(function, FAA_formNumber,strconv.Itoa(remainingQty))
 	valAsBytes, err := stub.InvokeChaincode(chaincodeURL, invokeArgs)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", err.Error())
