@@ -434,11 +434,11 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	status := "Created"
 	chaincodeURL := args[9]
 	// Adding Rule for senderType and receiverType
-	if(senderType == "Tier-3" || receiverType != "Tier-2"){
+	if(senderType == "Tier-3" && receiverType != "Tier-2"){
 		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
-	}else if(senderType == "Tier-2" || receiverType != "Tier-1"){
+	}else if(senderType == "Tier-2" && receiverType != "Tier-1"){
 		return nil,errors.New("Tier-2 can send shipment to Tier-1 only")
-	}else if(senderType == "Tier-1" || receiverType != "OEM"){
+	}else if(senderType == "Tier-1" && receiverType != "OEM"){
 		return nil,errors.New("Tier-1 can send shipment to OEM only")
 	}
 	fmt.Print("senderType: ")
@@ -475,7 +475,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Error while converting string 'approvedQty' to int ")
 	}*/
-	
+
 	//Shipped quantity cannot be greater than Form’s quantity
 	if(qty >=formQty){
 		return nil,errors.New("Shipped quantity cannot be greater than Form’s quantity")
