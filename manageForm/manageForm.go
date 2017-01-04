@@ -139,7 +139,7 @@ func (t *ManageForm) Run(stub shim.ChaincodeStubInterface, function string, args
 // ============================================================================================================================
 func (t *ManageForm) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
-
+	function, args := stub.GetFunctionAndParameters()
 	// Handle different functions
 	if function == "init" {													//initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
