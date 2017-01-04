@@ -463,6 +463,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
+		fmt.Sprintf("Error while converting string 'quantity' to int : %s", err.Error())
 		return nil, errors.New("Error while converting string 'quantity' to int ")
 	}
 	fmt.Print("qty: ")
