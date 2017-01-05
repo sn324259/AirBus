@@ -185,8 +185,8 @@ func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args string)
 	var FAA_formNumber, jsonResp string
 	var err error
 	fmt.Println("Fetching Form by FAA_formNumber")
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
+	if args == "" {
+		return nil, errors.New("Incorrect number of arguments. Expecting Form ID to query")
 	}
 	// set FAA_formNumber
 	FAA_formNumber = args
