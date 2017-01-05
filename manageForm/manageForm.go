@@ -1029,8 +1029,8 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	var err error
 	var valIndex Shipment
 	var	formIndex Form
-	if len(args) != 11 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 11")
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for OEM")
 	if len(args[0]) <= 0 {
