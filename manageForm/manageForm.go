@@ -166,7 +166,7 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 
 	// Handle different functions
 	if function == "getForm_byID" {													//Read a Form by FormID
-		return t.getForm_byID(stub, args)
+		return t.getForm_byID(stub, args[0])
 	} else if function == "getForm_byUser" {													//Read a Form by Buyer
 		return t.getForm_byUser(stub, args)
 	} else if function == "get_AllForm" {													//Read all Forms
@@ -180,7 +180,7 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 // ============================================================================================================================
 // getForm_byID - get Form details for a specific FormID from chaincode state
 // ============================================================================================================================
-func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	//getForm_byID('FAA_formNumber')
 	var FAA_formNumber, jsonResp string
 	var err error
@@ -189,7 +189,7 @@ func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args []strin
 		return nil, errors.New("Incorrect number of arguments. Expecting ID of the var to query")
 	}
 	// set FAA_formNumber
-	FAA_formNumber = args[0]
+	FAA_formNumber = args
 	valAsbytes, err := stub.GetState(FAA_formNumber)									//get the FAA_formNumber from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + FAA_formNumber + "\"}"
@@ -923,11 +923,11 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 		return nil,errors.New("New Form for Tier-1 can only be created from received forms with “Created” status.")
 	}
 
-	var formArgs []string
-	formArgs[0]=tier2_Form_number 
+	/*var formArgs []string
+	formArgs[0]=tier2_Form_number */
 	//  Tier-1 Form should be updated with Tier-3 Form number 
 
-	formAsbytes,err := t.getForm_byID(stub,formArgs);
+	formAsbytes,err := t.getForm_byID(stub,tier2_Form_number);
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get all OEM forms\"}"
 		return nil, errors.New(jsonResp)
@@ -1100,11 +1100,11 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 		fmt.Println("New Form for OEM can only be created from received forms with “Created” status")
 		return nil,errors.New("New Form for OEM can only be created from received forms with “Created” status.")
 	}
-	var formArgs []string
-	formArgs[0]=tier1_Form_number 
+	/*var formArgs []string
+	formArgs[0]=tier1_Form_number */
 	//  OEM Form should be updated with tier-2 Form number 
 
-	formAsbytes,err := t.getForm_byID(stub,formArgs);
+	formAsbytes,err := t.getForm_byID(stub,tier1_Form_number);
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get form by tier1_Form_number\"}"
 		return nil, errors.New(jsonResp)
