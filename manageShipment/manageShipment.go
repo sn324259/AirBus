@@ -482,7 +482,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	}*/
 
 	//Shipped quantity cannot be greater than Form’s quantity
-	if(qty >=formQty){
+	if(qty > formQty){
 		return nil,errors.New("Shipped quantity cannot be greater than Form’s quantity")
 	}	
 
@@ -497,20 +497,6 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	json.Unmarshal(ShipmentAsBytes, &res)
 	fmt.Print("res: ")
 	fmt.Println(res)
-
-	/*// calculate available quantity
-	availableQty := approvedQty - formQty
-	fmt.Print("availableQty : ")
-	fmt.Println(availableQty)*/
-	// Multiple shipments can be created for one Form as long as quantity is available
-	/*if res.FAA_FormNumber == FAA_formNumber{
-		fmt.Println("Shipments are already created for this form : " + FAA_formNumber)
-		fmt.Println(res);
-		if(qty >= availableQty){
-			return nil,errors.New("Quantity should be less than available Quantity")
-		}
-	}*/
-	
 	
 	// Shipments marked “Consumed” cannot be used for creating new Forms
 	if res.Status == "Consumed"{
