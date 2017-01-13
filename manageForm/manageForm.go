@@ -513,16 +513,17 @@ func (t *ManageForm) get_AllForm(stub shim.ChaincodeStubInterface, args []string
 // Write - update Form into chaincode state
 // ============================================================================================================================
 func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	//update_Form('faa_formNumber','quantity')
+	//update_Form('faa_formNumber','quantity','userType')
 	var jsonResp string
 	var err error
 	fmt.Println("Updating Form quantity")
-	if len(args) != 2{
-		return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+	if len(args) != 3{
+		return nil, errors.New("Incorrect number of arguments. Expecting 3.")
 	}
 	// set FAA_formNumber
 	FAA_formNumber := args[0]
 	quantity := args[1]
+	userType := args[2]
 	fmt.Print("quantity")
 	fmt.Println(quantity);
 	FormAsBytes, err := stub.GetState(FAA_formNumber)									//get the Form for the specified FormId from chaincode state
@@ -550,7 +551,14 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		}
 		res.Quantity = quantity
 	}
-	
+	var forms string
+	if userType == "Tier-2" {
+		forms = `"tier3_Form_number": "` + res.Tier3_Form_number + `" , `
+	}else if userType == "Tier-1"{
+	  forms = `"tier3_Form_number": "` + res.Tier3_Form_number + `" , `+ `"tier2_Form_number": "` + res.Tier2_Form_number + `" , `
+	}else if userType == "OEM"{
+	  forms = `"tier3_Form_number": "` + res.Tier3_Form_number + `" , `+ `"tier2_Form_number": "` + res.Tier2_Form_number + `" , ` + `"tier1_Form_number": "` + res.Tier1_Form_number + `" , `
+	}
 	//build the Form json string manually
 	input := 	`{`+
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
@@ -562,6 +570,7 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		`"total_approvedQty": "` + res.Total_approvedQty + `" , `+ 
 		`"approvalDate": "` + res.ApprovalDate + `" , `+ 	
 		`"authorization_number": "` + res.Authorization_number + `" , `+ 
+		forms +
 		`"userType": "` + res.UserType + `"`+
 		`}`
 	
