@@ -73,20 +73,20 @@ type Shipment struct{
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
 	ChaincodeURL string `json:"chaincodeURL"`
-	ship_frm_country string `json:"ship_frm_country"`
-	ship_frm_city string `json:"ship_frm_city"`
-	ship_to_country string `json:"ship_to_country"`
-	ship_to_city string `json:"ship_to_city"`
-	truck_details string `json:"truck_details"`
-	logistics_agency_details string `json:"logistics_agency_details"`
-	air_ship_way_bill_details string 'json:"air/ship_way_bill_way_details"`
-	flight_vessel_details string `json:"flight/vessel_details"`
-	departing_port string `json:"departing_port"`
-	arriving_port string `json:"arriving_port"`
-	scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
-	actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
-	vendor_name string `json:"vendor_name"`
-	tier_type string `json:"tier_type"`
+	Ship_frm_country string `json:"ship_frm_country"`
+	Ship_frm_city string `json:"ship_frm_city"`
+	Ship_to_country string `json:"ship_to_country"`
+	Ship_to_city string `json:"ship_to_city"`
+	Truck_details string `json:"truck_details"`
+	Logistics_agency_details string `json:"logistics_agency_details"`
+	Air_ship_way_bill_details string 'json:"air/ship_way_bill_way_details"`
+	Flight_vessel_details string `json:"flight/vessel_details"`
+	Departing_port string `json:"departing_port"`
+	Arriving_port string `json:"arriving_port"`
+	Scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
+	Actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
+	Vendor_name string `json:"vendor_name"`
+	Tier_type string `json:"tier_type"`
 	
 }
 // ============================================================================================================================
@@ -392,20 +392,20 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
 		`"status": "` + res.Status + `", `+
-		`"ship_frm_country": "`+res.ship_frm_country+ `" , `+ 
-		`"ship_frm_city": "`+res.ship_frm_city+ `" , `+
-		`"ship_to_country": "`+res.ship_to_country+ `" , `+
-		`"ship_to_city": "`+res.ship_to_city+ `" , `+
-		`"truck_details": "`+res.truck_details+`" , `+
-		`"logistics_agency_details": "`+res.logistics_agency_details+`" , `+
-		`"air_ship_way_bill_details": "`+res.air_ship_way_bill_details+`" , `+
-		`"flight_vessel_details": "`+res.flight_vessel_details+`" , `+
-		`"departing_port": "`+res.departing_port+`" , `+
-		`"arriving_port": "`+res.arriving_port+`" , `+
-		`"scheduled_departure_date_ts": "`+res.scheduled_departure_date_ts+`" , `+
-		`"actual_arrival_date_ts": "`+res.actual_arrival_date_ts+`" , `+
-		`"vendor_name": "`+res.vendor_name+`" , `+
-		`"tier_type": "`+res.tier_type+`" `+
+		`"ship_frm_country": "`+res.Ship_frm_country+ `" , `+ 
+		`"ship_frm_city": "`+res.Ship_frm_city+ `" , `+
+		`"ship_to_country": "`+res.Ship_to_country+ `" , `+
+		`"ship_to_city": "`+res.Ship_to_city+ `" , `+
+		`"truck_details": "`+res.Truck_details+`" , `+
+		`"logistics_agency_details": "`+res.Logistics_agency_details+`" , `+
+		`"air_ship_way_bill_details": "`+res.Air_ship_way_bill_details+`" , `+
+		`"flight_vessel_details": "`+res.Flight_vessel_details+`" , `+
+		`"departing_port": "`+res.Departing_port+`" , `+
+		`"arriving_port": "`+res.Arriving_port+`" , `+
+		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+res.Atual_arrival_date_ts+`" , `+
+		`"vendor_name": "`+res.Vndor_name+`" , `+
+		`"tier_type": "`+res.Ter_type+`" `+
 
 	
 	
