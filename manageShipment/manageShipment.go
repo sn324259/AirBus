@@ -79,8 +79,8 @@ type Shipment struct{
 	ship_to_city string `json:"ship_to_city"`
 	truck_details string `json:"truck_details"`
 	logistics_agency_details string `json:"logistics_agency_details"`
-	air/ship_way_bill_details string 'json:"air/ship_way_bill_way_details"`
-	flight/vessel_details string `json:"flight/vessel_details"`
+	air_ship_way_bill_details string 'json:"air/ship_way_bill_way_details"`
+	flight_vessel_details string `json:"flight/vessel_details"`
 	departing_port string `json:"departing_port"`
 	arriving_port string `json:"arriving_port"`
 	scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
