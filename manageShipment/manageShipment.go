@@ -33,7 +33,12 @@ import (
 type ManageShipment struct {
 }
 
-var ShipmentIndexStr = "_Shipmentindex"				//name for the key/value that will store a list of all known Shipments
+var ShipmentIndexStr = "_Shipmentindex"	//name for the key/value that will store a list of all known Shipments
+var Tier3ShipmentIndexStr="_Tier3Shipmentindex"  //name for the key/value that will store a list of all known Tier3 Shipments
+var Tier2ShipmentIndexStr="_Tier2Shipmentindex"  //name for the key/value that will store a list of all known Tier2 Shipments
+var Tier1ShipmentIndexStr="_Tier1Shipmentindex"  //name for the key/value that will store a list of all known Tier1 Shipments
+var OemShipmentIndexStr="_OemShipmentindex"      //name for the key/value that will store a list of all known OEM Shipments
+
 
 type Form struct{
 								// Attributes of a Form 
@@ -67,6 +72,22 @@ type Shipment struct{
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
+	chaincodeURL string `json:"chaincodeURL"`
+	ship_frm_country string `json:"ship_frm_country"`
+	ship_frm_city string `json:"ship_frm_city"`
+	ship_to_country string `json:"ship_to_country"`
+	ship_to_city string `json:"ship_to_city"`
+	truck_details string `json:"truck_details"`
+	logistics_agency_details string `json:"logistics_agency_details"`
+	air/ship_way_bill_details string 'json:"air/ship_way_bill_way_details"`
+	flight/vessel_details string `json:"flight/vessel_details"`
+	departing_port string `json:"departing_port"`
+	arriving_port string `json:"arriving_port"`
+	scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
+	actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
+	vendor_name string `json:"vendor_name"`
+	tier_type string `json:"tier_type"`
+	
 }
 // ============================================================================================================================
 // Main - start the chaincode for Shipment management
@@ -370,7 +391,24 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
-		`"status": "` + res.Status + `"`+ 
+		`"status": "` + res.Status + `", `+
+		`"ship_frm_country": "`+res.ship_frm_country+ `" , `+ 
+		`"ship_frm_city": "`+res.ship_frm_city+ `" , `+
+		`"ship_to_country": "`+res.ship_to_country+ `" , `+
+		`"ship_to_city": "`+res.ship_to_city+ `" , `+
+		`"truck_details": "`+res.truck_details+`" , `+
+		`"logistics_agency_details": "`+res.logistics_agency_details+`" , `+
+		`"air_ship_way_bill_details": "`+res.air_ship_way_bill_details+`" , `+
+		`"flight_vessel_details": "`+res.flight_vessel_details+`" , `+
+		`"departing_port": "`+res.departing_port+`" , `+
+		`"arriving_port": "`+res.arriving_port+`" , `+
+		`"scheduled_departure_date_ts": "`+res.scheduled_departure_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+res.actual_arrival_date_ts+`" , `+
+		`"vendor_name": "`+res.vendor_name+`" , `+
+		`"tier_type": "`+res.tier_type+`" `+
+
+	
+	
 	    `}`
 		
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
@@ -384,11 +422,17 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 // create Shipment - create a new Shipment, store into chaincode state
 // ============================================================================================================================
 func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
+	//createShipment('shipmentId','description','sender','receiver''sender_type','receiver_type','FAA_formNumber','quantity','shipmentDate','chaincodeURL'....)
+	//(....'ship_frm_country','ship_frm_city','ship_to_country','ship_to_city','truck_details'....)
+	//(....'logistics_agency_details','air/ship_way_bill_details','flight/vessel_details'....)
+	//(....'departing_port','arriving_port','scheduled_departure_date_ts','actual_arrival_date_ts')
+	//(....'vendor_name','tier_type')
+	//totan no of new arguments=23
+	
 	var err error
 	var valIndex Form
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	if len(args) != 21 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 21")
 	}
 	fmt.Println("Creating a new Shipment")
 	if len(args[0]) <= 0 {
@@ -421,6 +465,48 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}
+	if len(args[14]) <= 0 {
+		return nil, errors.New("15th argument must be a non-empty string")
+	}
+	if len(args[15]) <= 0 {
+		return nil, errors.New("16th argument must be a non-empty string")
+	}
+	if len(args[16]) <= 0 {
+		return nil, errors.New("17th argument must be a non-empty string")
+	}
+	if len(args[17]) <= 0 {
+		return nil, errors.New("18th argument must be a non-empty string")
+	}
+	if len(args[18]) <= 0 {
+		return nil, errors.New("19th argument must be a non-empty string")
+	}
+	if len(args[19]) <= 0 {
+		return nil, errors.New("20th argument must be a non-empty string")
+	}
+	if len(args[20]) <= 0 {
+		return nil, errors.New("21th argument must be a non-empty string")
+	}
+	if len(args[21]) <= 0 {
+		return nil, errors.New("22th argument must be a non-empty string")
+	}
+	if len(args[22]) <= 0 {
+		return nil, errors.New("23th argument must be a non-empty string")
+	}
+	
+	
+	
 	
 	shipmentId := args[0]
 	description := args[1]
@@ -433,6 +519,23 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	shipmentDate := args[8]
 	status := "Created"
 	chaincodeURL := args[9]
+	ship_frm_country:=args[10]
+	ship_frm_city:=args[11]
+	ship_to_country:=args[12]
+	ship_to_city:=args[13]
+	truck_details:=args[14]
+	logistics_agency_details:=args[15]
+	air_ship_way_bill_details:=args[16]
+	flight_vessel_details:=args[17]
+	departing_port:=args[18]
+	arriving_port:=args[19]
+	scheduled_departure_date_ts:=args[20]
+	actual_arrival_date_ts:=args[21]
+	vendor_name:=args[22]
+	tier_type:=args[23]
+	
+	
+	
 	// Adding Rule for senderType and receiverType
 	if(senderType == "Tier-3" && receiverType != "Tier-2"){
 		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
@@ -515,8 +618,24 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"shipmentDate": "` + shipmentDate + `" , `+ 
-		`"status": "` + status + `"`+ 
+		`"status": "` + status + `" , `+ 
+		`"ship_frm_country": "`+ship_frm_country+ `" , `+ 
+		`"ship_frm_city": "`+ship_frm_city+ `" , `+
+		`"ship_to_country": "`+ship_to_country+ `" , `+
+		`"ship_to_city": "`+ship_to_city+ `" , `+
+		`"truck_details": "`+truck_details+`" , `+
+		`"logistics_agency_details": "`+logistics_agency_details+`" , `+
+		`"air_ship_way_bill_details": "`+air_ship_way_bill_details+`" , `+
+		`"flight_vessel_details": "`+flight_vessel_details+`" , `+
+		`"departing_port": "`+departing_port+`" , `+
+		`"arriving_port": "`+arriving_port+`" , `+
+		`"scheduled_departure_date_ts": "`+scheduled_departure_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+actual_arrival_date_ts+`" , `+
+		`"vendor_name": "`+vendor_name+`" , `+
+		`"tier_type": "`+tier_type+`" `+
+
 	    `}`
+	
 	fmt.Println("input: " + input)
 	fmt.Print("input in bytes array: ")
 	fmt.Println([]byte(input))
@@ -546,6 +665,51 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
+	
+	
+	
+	
+	//get the Shipment index
+	Tier3ShipmentIndexAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get Shipment index")
+	}
+	var Tier3ShipmentIndex []string
+	fmt.Print("Tier3ShipmentIndexAsBytes: ")
+	fmt.Println(Tier3ShipmentIndexAsBytes)
+	
+	json.Unmarshal(Tier3ShipmentIndexAsBytes, &Tier3ShipmentIndex)							//un stringify it aka JSON.parse()
+	fmt.Print("Tier3ShipmentIndex after unmarshal..before append: ")
+	fmt.Println(Tier3ShipmentIndex)
+	//append
+	Tier3ShipmentIndex = append(Tier3ShipmentIndex, shipmentId)									//add Shipment transID to index list
+	fmt.Println("!Tier3 Shipment index after appending shipmentId: ", Tier3ShipmentIndex)
+	jsonAsBytes, _ := json.Marshal(Tier3ShipmentIndex)
+	fmt.Print("jsonAsBytes: ")
+	fmt.Println(jsonAsBytes)
+	err = stub.PutState(Tier3ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+	if err != nil {
+		return nil, err
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	fmt.Println("Shipment created successfully.")
 	// calculate quantity left after shipment creation
