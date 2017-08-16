@@ -72,7 +72,7 @@ type Shipment struct{
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
-	chaincodeURL string `json:"chaincodeURL"`
+	ChaincodeURL string `json:"chaincodeURL"`
 	ship_frm_country string `json:"ship_frm_country"`
 	ship_frm_city string `json:"ship_frm_city"`
 	ship_to_country string `json:"ship_to_country"`
