@@ -124,6 +124,23 @@ func (t *ManageShipment) Init(stub shim.ChaincodeStubInterface, function string,
 	if err != nil {
 		return nil, err
 	}
+	err = stub.PutState(Tier3ShipmentIndexStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+	err = stub.PutState(Tier2ShipmentIndexStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+	err = stub.PutState(Tier1ShipmentIndexStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+	err = stub.PutState(OemShipmentIndexStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+	
 	
 	return nil, nil
 }
