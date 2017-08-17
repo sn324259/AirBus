@@ -546,7 +546,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 
 func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
-	var jsonResp,errResp string
+	var jsonResp string
 	fmt.Println("Fetching All Shipment IDS by Tier Type")
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
