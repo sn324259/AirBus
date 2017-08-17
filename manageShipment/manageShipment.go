@@ -540,7 +540,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 	return []byte(jsonResp), nil	
 		
 	}
-	return nil,error.new("Cante fetch forms by tier Type fatal error")
+	return nil,errors.New("Cante fetch forms by tier Type fatal error")
 }
 	
 
