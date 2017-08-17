@@ -947,7 +947,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		}
 	}
 	
-	id tier_type=="Oem"{
+	if tier_type=="Oem"{
 		
 		OemShipmentIndexAsBytes, err := stub.GetState(OemShipmentIndexStr)
 		if err != nil {
