@@ -87,6 +87,7 @@ type Shipment struct{
 	Actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
 	Vendor_name string `json:"vendor_name"`
 	Tier_type string `json:"tier_type"`
+	Ipfs_hash string `json:"ipfs_hash"`
 	
 }
 // ============================================================================================================================
@@ -580,6 +581,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
 		`"actual_arrival_date_ts": "`+res.Atual_arrival_date_ts+`" , `+
 		`"vendor_name": "`+res.Vndor_name+`" , `+
+		`"ipfs_hash": "`+res.Ipfs_hash+`" , `+
 		`"tier_type": "`+res.Ter_type+`" `+
 
 	
@@ -601,13 +603,13 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	//(....'ship_frm_country','ship_frm_city','ship_to_country','ship_to_city','truck_details'....)
 	//(....'logistics_agency_details','air/ship_way_bill_details','flight/vessel_details'....)
 	//(....'departing_port','arriving_port','scheduled_departure_date_ts','actual_arrival_date_ts')
-	//(....'vendor_name','tier_type')
-	//totan no of new arguments=23
+	//(....'vendor_name','tier_type','ipfs_hash')
+	//totan no of new arguments=25
 	
 	var err error
 	var valIndex Form
-	if len(args) != 21 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 21")
+	if len(args) != 25 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 24")
 	}
 	fmt.Println("Creating a new Shipment")
 	if len(args[0]) <= 0 {
@@ -679,6 +681,12 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if len(args[22]) <= 0 {
 		return nil, errors.New("23th argument must be a non-empty string")
 	}
+	if len(args[23]) <= 0 {
+		return nil, errors.New("24th argument must be a non-empty string")
+	}
+	if len(args[24]) <= 0 {
+		return nil, errors.New("25th argument must be a non-empty string")
+	}
 	
 	
 	
@@ -708,6 +716,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	actual_arrival_date_ts:=args[21]
 	vendor_name:=args[22]
 	tier_type:=args[23]
+	ipfs_hash:=args[24]
 	
 	
 	
@@ -807,6 +816,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		`"scheduled_departure_date_ts": "`+scheduled_departure_date_ts+`" , `+
 		`"actual_arrival_date_ts": "`+actual_arrival_date_ts+`" , `+
 		`"vendor_name": "`+vendor_name+`" , `+
+		`"ipfs_hash": "`+ipfs_hash+`" , `+
 		`"tier_type": "`+tier_type+`" `+
 
 	    `}`
