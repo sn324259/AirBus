@@ -378,7 +378,6 @@ func (t *ManageShipment) get_AllShipment(stub shim.ChaincodeStubInterface, args 
 func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp,errResp string
 	fmt.Println("Fetching All Shipments by Tier Type")
-	var err error
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
 	}
