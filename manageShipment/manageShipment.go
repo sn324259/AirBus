@@ -595,12 +595,12 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		for i,val := range Tier2ShipmentIndex{
 			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier2 Shipments")
 			jsonResp = jsonResp + val
-			if i < len(Tier3ShipmentIndex)-1 {
+			if i < len(Tier2ShipmentIndex)-1 {
 				jsonResp = jsonResp + ","
 			}
 		}
 	fmt.Println("len(ShipmentIndex) : ")
-	fmt.Println(len(Tier3ShipmentIndex))
+	fmt.Println(len(Tier2ShipmentIndex))
 	jsonResp = jsonResp + "}"
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("Fetched All Tier2 Shipments successfully.")
