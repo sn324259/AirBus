@@ -596,10 +596,10 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"departing_port": "`+res.Departing_port+`" , `+
 		`"arriving_port": "`+res.Arriving_port+`" , `+
 		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
-		`"actual_arrival_date_ts": "`+res.Atual_arrival_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+res.Actual_arrival_date_ts+`" , `+
 		`"vendor_name": "`+res.Vndor_name+`" , `+
 		`"ipfs_hash": "`+res.Ipfs_hash+`" , `+
-		`"tier_type": "`+res.Ter_type+`" `+
+		`"tier_type": "`+res.Tier_type+`" `+
 
 	
 	
@@ -872,27 +872,106 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	
 	
 	//get the Shipment index
-	Tier3ShipmentIndexAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
-	if err != nil {
-		return nil, errors.New("Failed to get Shipment index")
+	if tier_type=="Tier3"{
+		
+		Tier3ShipmentIndexAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Shipment index")
+		}
+		var Tier3ShipmentIndex []string
+		fmt.Print("Tier3ShipmentIndexAsBytes: ")
+		fmt.Println(Tier3ShipmentIndexAsBytes)
+
+		json.Unmarshal(Tier3ShipmentIndexAsBytes, &Tier3ShipmentIndex)							//un stringify it aka JSON.parse()
+		fmt.Print("Tier3ShipmentIndex after unmarshal..before append: ")
+		fmt.Println(Tier3ShipmentIndex)
+		//append
+		Tier3ShipmentIndex = append(Tier3ShipmentIndex, shipmentId)									//add Shipment transID to index list
+		fmt.Println("!Tier3 Shipment index after appending shipmentId: ", Tier3ShipmentIndex)
+		jsonAsBytes, _ := json.Marshal(Tier3ShipmentIndex)
+		fmt.Print("jsonAsBytes: ")
+		fmt.Println(jsonAsBytes)
+		err = stub.PutState(Tier3ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+		if err != nil {
+			return nil, err
+		}
 	}
-	var Tier3ShipmentIndex []string
-	fmt.Print("Tier3ShipmentIndexAsBytes: ")
-	fmt.Println(Tier3ShipmentIndexAsBytes)
 	
-	json.Unmarshal(Tier3ShipmentIndexAsBytes, &Tier3ShipmentIndex)							//un stringify it aka JSON.parse()
-	fmt.Print("Tier3ShipmentIndex after unmarshal..before append: ")
-	fmt.Println(Tier3ShipmentIndex)
-	//append
-	Tier3ShipmentIndex = append(Tier3ShipmentIndex, shipmentId)									//add Shipment transID to index list
-	fmt.Println("!Tier3 Shipment index after appending shipmentId: ", Tier3ShipmentIndex)
-	jsonAsBytes, _ := json.Marshal(Tier3ShipmentIndex)
-	fmt.Print("jsonAsBytes: ")
-	fmt.Println(jsonAsBytes)
-	err = stub.PutState(Tier3ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
-	if err != nil {
-		return nil, err
+	if tier_type=="Tier2"{
+		
+		Tier2ShipmentIndexAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier2 Shipment index")
+		}
+		var Tier2ShipmentIndex []string
+		fmt.Print("Tier2ShipmentIndexAsBytes: ")
+		fmt.Println(Tier2ShipmentIndexAsBytes)
+
+		json.Unmarshal(Tier2ShipmentIndexAsBytes, &Tier2ShipmentIndex)							//un stringify it aka JSON.parse()
+		fmt.Print("Tier2ShipmentIndex after unmarshal..before append: ")
+		fmt.Println(Tier2ShipmentIndex)
+		//append
+		Tier2ShipmentIndex = append(Tier2ShipmentIndex, shipmentId)									//add Shipment transID to index list
+		fmt.Println("!Tier2 Shipment index after appending shipmentId: ", Tier2ShipmentIndex)
+		jsonAsBytes, _ := json.Marshal(Tier2ShipmentIndex)
+		fmt.Print("jsonAsBytes: ")
+		fmt.Println(jsonAsBytes)
+		err = stub.PutState(Tier2ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+		if err != nil {
+			return nil, err
+		}
 	}
+	
+	if tier_type=="Tier1"{
+		
+		Tier1ShipmentIndexAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier1 Shipment index")
+		}
+		var Tier1ShipmentIndex []string
+		fmt.Print("Tier1ShipmentIndexAsBytes: ")
+		fmt.Println(Tier1ShipmentIndexAsBytes)
+
+		json.Unmarshal(Tier1ShipmentIndexAsBytes, &Tier1ShipmentIndex)							//un stringify it aka JSON.parse()
+		fmt.Print("Tier1ShipmentIndex after unmarshal..before append: ")
+		fmt.Println(Tier1ShipmentIndex)
+		//append
+		Tier2ShipmentIndex = append(Tier1ShipmentIndex, shipmentId)									//add Shipment transID to index list
+		fmt.Println("!Tier2 Shipment index after appending shipmentId: ", Tier1ShipmentIndex)
+		jsonAsBytes, _ := json.Marshal(Tier1ShipmentIndex)
+		fmt.Print("jsonAsBytes: ")
+		fmt.Println(jsonAsBytes)
+		err = stub.PutState(Tier1ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+		if err != nil {
+			return nil, err
+		}
+	}
+	
+	id tier_type=="Oem"{
+		
+		OemShipmentIndexAsBytes, err := stub.GetState(OemShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get OEM Shipment index")
+		}
+		var OemShipmentIndex []string
+		fmt.Print("OemShipmentIndexAsBytes: ")
+		fmt.Println(OemShipmentIndexAsBytes)
+
+		json.Unmarshal(OemShipmentIndexAsBytes, &OemShipmentIndex)							//un stringify it aka JSON.parse()
+		fmt.Print("OemShipmentIndex after unmarshal..before append: ")
+		fmt.Println(OemShipmentIndex)
+		//append
+		OemShipmentIndex = append(OemShipmentIndex, shipmentId)									//add Shipment transID to index list
+		fmt.Println("!Tier2 Shipment index after appending shipmentId: ", OemShipmentIndex)
+		jsonAsBytes, _ := json.Marshal(OemShipmentIndex)
+		fmt.Print("jsonAsBytes: ")
+		fmt.Println(jsonAsBytes)
+		err = stub.PutState(OemShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+		if err != nil {
+			return nil, err
+		}
+	}
+	
 	
 	
 	
