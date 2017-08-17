@@ -597,7 +597,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"arriving_port": "`+res.Arriving_port+`" , `+
 		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
 		`"actual_arrival_date_ts": "`+res.Actual_arrival_date_ts+`" , `+
-		`"vendor_name": "`+res.Vndor_name+`" , `+
+		`"vendor_name": "`+res.Vendor_name+`" , `+
 		`"ipfs_hash": "`+res.Ipfs_hash+`" , `+
 		`"tier_type": "`+res.Tier_type+`" `+
 
@@ -936,8 +936,8 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		fmt.Print("Tier1ShipmentIndex after unmarshal..before append: ")
 		fmt.Println(Tier1ShipmentIndex)
 		//append
-		Tier2ShipmentIndex = append(Tier1ShipmentIndex, shipmentId)									//add Shipment transID to index list
-		fmt.Println("!Tier2 Shipment index after appending shipmentId: ", Tier1ShipmentIndex)
+		Tier1ShipmentIndex = append(Tier1ShipmentIndex, shipmentId)									//add Shipment transID to index list
+		fmt.Println("!Tier1 Shipment index after appending shipmentId: ", Tier1ShipmentIndex)
 		jsonAsBytes, _ := json.Marshal(Tier1ShipmentIndex)
 		fmt.Print("jsonAsBytes: ")
 		fmt.Println(jsonAsBytes)
@@ -962,7 +962,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		fmt.Println(OemShipmentIndex)
 		//append
 		OemShipmentIndex = append(OemShipmentIndex, shipmentId)									//add Shipment transID to index list
-		fmt.Println("!Tier2 Shipment index after appending shipmentId: ", OemShipmentIndex)
+		fmt.Println("!Oem Shipment index after appending shipmentId: ", OemShipmentIndex)
 		jsonAsBytes, _ := json.Marshal(OemShipmentIndex)
 		fmt.Print("jsonAsBytes: ")
 		fmt.Println(jsonAsBytes)
