@@ -33,7 +33,7 @@ import (
 type ManageShipment struct {
 }
 
-var ShipmentIndexStr = "_Shipmentindex"	//name for the key/value that will store a list of all known Shipments
+var ShipmentIndexStr = "_Shipmentindex"	//name for the key/value that will store a list of all known Shipment
 var Tier3ShipmentIndexStr="_Tier3Shipmentindex"  //name for the key/value that will store a list of all known Tier3 Shipments
 var Tier2ShipmentIndexStr="_Tier2Shipmentindex"  //name for the key/value that will store a list of all known Tier2 Shipments
 var Tier1ShipmentIndexStr="_Tier1Shipmentindex"  //name for the key/value that will store a list of all known Tier1 Shipments
