@@ -33,7 +33,12 @@ import (
 type ManageShipment struct {
 }
 
-var ShipmentIndexStr = "_Shipmentindex"				//name for the key/value that will store a list of all known Shipments
+var ShipmentIndexStr = "_Shipmentindex"	//name for the key/value that will store a list of all known Shipments
+var Tier3ShipmentIndexStr="_Tier3Shipmentindex"  //name for the key/value that will store a list of all known Tier3 Shipments
+var Tier2ShipmentIndexStr="_Tier2Shipmentindex"  //name for the key/value that will store a list of all known Tier2 Shipments
+var Tier1ShipmentIndexStr="_Tier1Shipmentindex"  //name for the key/value that will store a list of all known Tier1 Shipments
+var OemShipmentIndexStr="_OemShipmentindex"      //name for the key/value that will store a list of all known OEM Shipments
+
 
 type Form struct{
 								// Attributes of a Form 
@@ -67,6 +72,23 @@ type Shipment struct{
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
+	ChaincodeURL string `json:"chaincodeURL"`
+	Ship_frm_country string `json:"ship_frm_country"`
+	Ship_frm_city string `json:"ship_frm_city"`
+	Ship_to_country string `json:"ship_to_country"`
+	Ship_to_city string `json:"ship_to_city"`
+	Truck_details string `json:"truck_details"`
+	Logistics_agency_details string `json:"logistics_agency_details"`
+	Air_ship_way_bill_details string `json:"air_ship_way_bill_way_details"`
+	Flight_vessel_details string `json:"flight_vessel_details"`
+	Departing_port string `json:"departing_port"`
+	Arriving_port string `json:"arriving_port"`
+	Scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
+	Actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
+	Vendor_name string `json:"vendor_name"`
+	Tier_type string `json:"tier_type"`
+	Ipfs_hash string `json:"ipfs_hash"`
+	
 }
 // ============================================================================================================================
 // Main - start the chaincode for Shipment management
@@ -144,7 +166,10 @@ func (t *ManageShipment) Query(stub shim.ChaincodeStubInterface, function string
 		return t.get_AllShipment(stub, args)
 	}else if function == "getShipment_byId" {													//Read a Shipment by Buyer
 		return t.getShipment_byId(stub, args)
+	}else if function == "get_AllShipmentByTier" {													//Read a Shipment by Buyer
+		return t.get_AllShipmentByTier(stub, args)
 	}
+	
 
 	fmt.Println("query did not find func: " + function)						//error
 	return nil, errors.New("Received unknown function query")
@@ -331,6 +356,178 @@ func (t *ManageShipment) get_AllShipment(stub shim.ChaincodeStubInterface, args 
 	return []byte(jsonResp), nil
 }
 
+
+
+func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp,errResp string
+	fmt.Println("Fetching All Shipments by Tier Type")
+	var err error
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
+	}
+	
+	if args[0]=="Tier3"{
+		var Tier3ShipmentIndex []string
+		Tier3ShipmentAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier3 Shipment index")
+		}
+		
+		fmt.Print("Tier3ShipmentAsBytes : ")
+		fmt.Println(Tier3ShipmentAsBytes)
+		json.Unmarshal(Tier3ShipmentAsBytes, &Tier3ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier3ShipmentIndex : ")
+		fmt.Println(Tier3ShipmentIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier3ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier3 Shipments")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier3ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier3ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier3 Shipments successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	
+	if args[0]=="Tier2"{
+		var Tier2ShipmentIndex []string
+		Tier2ShipmentAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier2 Shipment index")
+		}
+		
+		fmt.Print("Tier2ShipmentAsBytes : ")
+		fmt.Println(Tier2ShipmentAsBytes)
+		json.Unmarshal(Tier2ShipmentAsBytes, &Tier2ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier2ShipmentIndex : ")
+		fmt.Println(Tier2ShipmentIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier2ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier2 Shipments")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier2ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier2ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier2 Shipments successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	if args[0]=="Tier1"{
+		var Tier1ShipmentIndex []string
+		Tier1ShipmentAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier1 Shipment index")
+		}
+		
+		fmt.Print("Tier1ShipmentAsBytes : ")
+		fmt.Println(Tier1ShipmentAsBytes)
+		json.Unmarshal(Tier1ShipmentAsBytes, &Tier1ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier1ShipmentIndex : ")
+		fmt.Println(Tier1ShipmentIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier1ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier1 Shipments")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier1ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier1ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier1 Shipments successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	
+	if args[0]=="Oem"{
+		var OemShipmentIndex []string
+		OemShipmentAsBytes, err := stub.GetState(OemShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Oem Shipment index")
+		}
+		
+		fmt.Print("OemShipmentAsBytes : ")
+		fmt.Println(OemShipmentAsBytes)
+		json.Unmarshal(OemShipmentAsBytes, &OemShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("OemShipmentIndex : ")
+		fmt.Println(OemShipmentIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range OemShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Oem Shipments")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(OemShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(OemShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Oem Shipments successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	
+}
+
+
 // ============================================================================================================================
 // updateShipment - update Shipment status into chaincode state
 // ============================================================================================================================
@@ -370,7 +567,25 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
-		`"status": "` + res.Status + `"`+ 
+		`"status": "` + res.Status + `", `+
+		`"ship_frm_country": "`+res.Ship_frm_country+ `" , `+ 
+		`"ship_frm_city": "`+res.Ship_frm_city+ `" , `+
+		`"ship_to_country": "`+res.Ship_to_country+ `" , `+
+		`"ship_to_city": "`+res.Ship_to_city+ `" , `+
+		`"truck_details": "`+res.Truck_details+`" , `+
+		`"logistics_agency_details": "`+res.Logistics_agency_details+`" , `+
+		`"air_ship_way_bill_details": "`+res.Air_ship_way_bill_details+`" , `+
+		`"flight_vessel_details": "`+res.Flight_vessel_details+`" , `+
+		`"departing_port": "`+res.Departing_port+`" , `+
+		`"arriving_port": "`+res.Arriving_port+`" , `+
+		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+res.Atual_arrival_date_ts+`" , `+
+		`"vendor_name": "`+res.Vndor_name+`" , `+
+		`"ipfs_hash": "`+res.Ipfs_hash+`" , `+
+		`"tier_type": "`+res.Ter_type+`" `+
+
+	
+	
 	    `}`
 		
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
@@ -384,11 +599,17 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 // create Shipment - create a new Shipment, store into chaincode state
 // ============================================================================================================================
 func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
+	//createShipment('shipmentId','description','sender','receiver''sender_type','receiver_type','FAA_formNumber','quantity','shipmentDate','chaincodeURL'....)
+	//(....'ship_frm_country','ship_frm_city','ship_to_country','ship_to_city','truck_details'....)
+	//(....'logistics_agency_details','air/ship_way_bill_details','flight/vessel_details'....)
+	//(....'departing_port','arriving_port','scheduled_departure_date_ts','actual_arrival_date_ts')
+	//(....'vendor_name','tier_type','ipfs_hash')
+	//totan no of new arguments=25
+	
 	var err error
 	var valIndex Form
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 10")
+	if len(args) != 25 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 24")
 	}
 	fmt.Println("Creating a new Shipment")
 	if len(args[0]) <= 0 {
@@ -421,6 +642,54 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("12th argument must be a non-empty string")
+	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}
+	if len(args[14]) <= 0 {
+		return nil, errors.New("15th argument must be a non-empty string")
+	}
+	if len(args[15]) <= 0 {
+		return nil, errors.New("16th argument must be a non-empty string")
+	}
+	if len(args[16]) <= 0 {
+		return nil, errors.New("17th argument must be a non-empty string")
+	}
+	if len(args[17]) <= 0 {
+		return nil, errors.New("18th argument must be a non-empty string")
+	}
+	if len(args[18]) <= 0 {
+		return nil, errors.New("19th argument must be a non-empty string")
+	}
+	if len(args[19]) <= 0 {
+		return nil, errors.New("20th argument must be a non-empty string")
+	}
+	if len(args[20]) <= 0 {
+		return nil, errors.New("21th argument must be a non-empty string")
+	}
+	if len(args[21]) <= 0 {
+		return nil, errors.New("22th argument must be a non-empty string")
+	}
+	if len(args[22]) <= 0 {
+		return nil, errors.New("23th argument must be a non-empty string")
+	}
+	if len(args[23]) <= 0 {
+		return nil, errors.New("24th argument must be a non-empty string")
+	}
+	if len(args[24]) <= 0 {
+		return nil, errors.New("25th argument must be a non-empty string")
+	}
+	
+	
+	
 	
 	shipmentId := args[0]
 	description := args[1]
@@ -433,6 +702,24 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	shipmentDate := args[8]
 	status := "Created"
 	chaincodeURL := args[9]
+	ship_frm_country:=args[10]
+	ship_frm_city:=args[11]
+	ship_to_country:=args[12]
+	ship_to_city:=args[13]
+	truck_details:=args[14]
+	logistics_agency_details:=args[15]
+	air_ship_way_bill_details:=args[16]
+	flight_vessel_details:=args[17]
+	departing_port:=args[18]
+	arriving_port:=args[19]
+	scheduled_departure_date_ts:=args[20]
+	actual_arrival_date_ts:=args[21]
+	vendor_name:=args[22]
+	tier_type:=args[23]
+	ipfs_hash:=args[24]
+	
+	
+	
 	// Adding Rule for senderType and receiverType
 	if(senderType == "Tier-3" && receiverType != "Tier-2"){
 		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
@@ -515,8 +802,25 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"shipmentDate": "` + shipmentDate + `" , `+ 
-		`"status": "` + status + `"`+ 
+		`"status": "` + status + `" , `+ 
+		`"ship_frm_country": "`+ship_frm_country+ `" , `+ 
+		`"ship_frm_city": "`+ship_frm_city+ `" , `+
+		`"ship_to_country": "`+ship_to_country+ `" , `+
+		`"ship_to_city": "`+ship_to_city+ `" , `+
+		`"truck_details": "`+truck_details+`" , `+
+		`"logistics_agency_details": "`+logistics_agency_details+`" , `+
+		`"air_ship_way_bill_details": "`+air_ship_way_bill_details+`" , `+
+		`"flight_vessel_details": "`+flight_vessel_details+`" , `+
+		`"departing_port": "`+departing_port+`" , `+
+		`"arriving_port": "`+arriving_port+`" , `+
+		`"scheduled_departure_date_ts": "`+scheduled_departure_date_ts+`" , `+
+		`"actual_arrival_date_ts": "`+actual_arrival_date_ts+`" , `+
+		`"vendor_name": "`+vendor_name+`" , `+
+		`"ipfs_hash": "`+ipfs_hash+`" , `+
+		`"tier_type": "`+tier_type+`" `+
+
 	    `}`
+	
 	fmt.Println("input: " + input)
 	fmt.Print("input in bytes array: ")
 	fmt.Println([]byte(input))
@@ -546,6 +850,51 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
+	
+	
+	
+	
+	//get the Shipment index
+	Tier3ShipmentIndexAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get Shipment index")
+	}
+	var Tier3ShipmentIndex []string
+	fmt.Print("Tier3ShipmentIndexAsBytes: ")
+	fmt.Println(Tier3ShipmentIndexAsBytes)
+	
+	json.Unmarshal(Tier3ShipmentIndexAsBytes, &Tier3ShipmentIndex)							//un stringify it aka JSON.parse()
+	fmt.Print("Tier3ShipmentIndex after unmarshal..before append: ")
+	fmt.Println(Tier3ShipmentIndex)
+	//append
+	Tier3ShipmentIndex = append(Tier3ShipmentIndex, shipmentId)									//add Shipment transID to index list
+	fmt.Println("!Tier3 Shipment index after appending shipmentId: ", Tier3ShipmentIndex)
+	jsonAsBytes, _ := json.Marshal(Tier3ShipmentIndex)
+	fmt.Print("jsonAsBytes: ")
+	fmt.Println(jsonAsBytes)
+	err = stub.PutState(Tier3ShipmentIndexStr, jsonAsBytes)						//store name of Shipment
+	if err != nil {
+		return nil, err
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	fmt.Println("Shipment created successfully.")
 	// calculate quantity left after shipment creation
