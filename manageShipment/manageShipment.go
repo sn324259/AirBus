@@ -544,7 +544,137 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 	
 
 
+func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	
+	var jsonResp,errResp string
+	fmt.Println("Fetching All Shipment IDS by Tier Type")
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
+	}
+	if args[0]=="Tier3"{
+		var Tier3ShipmentIndex []string
+		Tier3ShipmentAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier3 Shipment index")
+		}
+		
+		fmt.Print("Tier3ShipmentAsBytes : ")
+		fmt.Println(Tier3ShipmentAsBytes)
+		json.Unmarshal(Tier3ShipmentAsBytes, &Tier3ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier3ShipmentIndex : ")
+		fmt.Println(Tier3ShipmentIndex)
+		jsonResp = "{Tier3ShipmetList:["
+		for i,val := range Tier3ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier3 Shipments")
+			jsonResp = jsonResp + val
+			if i < len(Tier3ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier3ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier3 Shipments successfully.")
+	return []byte(jsonResp), nil	
+	}
+	
+	if args[0]=="Tier2"{
+		var Tier2ShipmentIndex []string
+		Tier2ShipmentAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier2 Shipment index")
+		}
+		
+		fmt.Print("Tier2ShipmentAsBytes : ")
+		fmt.Println(Tier2ShipmentAsBytes)
+		json.Unmarshal(Tier2ShipmentAsBytes, &Tier2ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier2ShipmentIndex : ")
+		fmt.Println(Tier2ShipmentIndex)
+		jsonResp = "{Tier2ShipmetList:["
+		for i,val := range Tier2ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier2 Shipments")
+			jsonResp = jsonResp + val
+			if i < len(Tier3ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier3ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier2 Shipments successfully.")
+	return []byte(jsonResp), nil	
+	}
+	
+	if args[0]=="Tier1"{
+		var Tier1ShipmentIndex []string
+		Tier1ShipmentAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier1 Shipment index")
+		}
+		
+		fmt.Print("Tier1ShipmentAsBytes : ")
+		fmt.Println(Tier1ShipmentAsBytes)
+		json.Unmarshal(Tier1ShipmentAsBytes, &Tier1ShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier1ShipmentIndex : ")
+		fmt.Println(Tier1ShipmentIndex)
+		jsonResp = "{Tier1ShipmetList:["
+		for i,val := range Tier1ShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier1 Shipments")
+			jsonResp = jsonResp + val
+			if i < len(Tier1ShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(Tier1ShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier1 Shipments successfully.")
+	return []byte(jsonResp), nil	
+	}
+	
+	if args[0]=="Oem"{
+		var OemShipmentIndex []string
+		OemShipmentAsBytes, err := stub.GetState(OemShipmentIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get OEM Shipment index")
+		}
+		
+		fmt.Print("OemShipmentAsBytes : ")
+		fmt.Println(OemShipmentAsBytes)
+		json.Unmarshal(OemShipmentAsBytes, &OemShipmentIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("OemShipmentIndex : ")
+		fmt.Println(OemShipmentIndex)
+		jsonResp = "{OemShipmetList:["
+		for i,val := range OemShipmentIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all OEM Shipments")
+			jsonResp = jsonResp + val
+			if i < len(OemShipmentIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(OemShipmentIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Oem Shipments successfully.")
+	return []byte(jsonResp), nil	
+	}
+	return nil,errors.New("Cante fetch forms by tier Type fatal error")
+}
+	
+	
+	
+	
 
+
+
+
+
+
+}
 // ============================================================================================================================
 // updateShipment - update Shipment status into chaincode state
 // ============================================================================================================================
