@@ -564,7 +564,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		json.Unmarshal(Tier3ShipmentAsBytes, &Tier3ShipmentIndex)								//un stringify it aka JSON.parse()
 		fmt.Print("Tier3ShipmentIndex : ")
 		fmt.Println(Tier3ShipmentIndex)
-		jsonResp = "{Tier3ShipmetList:["
+		jsonResp = "{\"ShipmetList\":\"["
 		for i,val := range Tier3ShipmentIndex{
 			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier3 Shipments")
 			jsonResp = jsonResp + val
@@ -574,7 +574,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		}
 	fmt.Println("len(ShipmentIndex) : ")
 	fmt.Println(len(Tier3ShipmentIndex))
-	jsonResp = jsonResp + "}"
+	jsonResp = jsonResp +"]\""+ "}"
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("Fetched All Tier3 Shipments successfully.")
 	return []byte(jsonResp), nil	
@@ -592,7 +592,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		json.Unmarshal(Tier2ShipmentAsBytes, &Tier2ShipmentIndex)								//un stringify it aka JSON.parse()
 		fmt.Print("Tier2ShipmentIndex : ")
 		fmt.Println(Tier2ShipmentIndex)
-		jsonResp = "{Tier2ShipmetList:["
+		jsonResp = "{\"ShipmetList\":\"["
 		for i,val := range Tier2ShipmentIndex{
 			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier2 Shipments")
 			jsonResp = jsonResp + val
@@ -602,7 +602,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		}
 	fmt.Println("len(ShipmentIndex) : ")
 	fmt.Println(len(Tier2ShipmentIndex))
-	jsonResp = jsonResp + "}"
+	jsonResp = jsonResp +"]\""+ "}"
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("Fetched All Tier2 Shipments successfully.")
 	return []byte(jsonResp), nil	
@@ -620,7 +620,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		json.Unmarshal(Tier1ShipmentAsBytes, &Tier1ShipmentIndex)								//un stringify it aka JSON.parse()
 		fmt.Print("Tier1ShipmentIndex : ")
 		fmt.Println(Tier1ShipmentIndex)
-		jsonResp = "{Tier1ShipmetList:["
+		jsonResp = "{\"ShipmetList\":\"["
 		for i,val := range Tier1ShipmentIndex{
 			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier1 Shipments")
 			jsonResp = jsonResp + val
@@ -630,7 +630,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		}
 	fmt.Println("len(ShipmentIndex) : ")
 	fmt.Println(len(Tier1ShipmentIndex))
-	jsonResp = jsonResp + "}"
+	jsonResp = jsonResp +"]\""+ "}"
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("Fetched All Tier1 Shipments successfully.")
 	return []byte(jsonResp), nil	
@@ -648,7 +648,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		json.Unmarshal(OemShipmentAsBytes, &OemShipmentIndex)								//un stringify it aka JSON.parse()
 		fmt.Print("OemShipmentIndex : ")
 		fmt.Println(OemShipmentIndex)
-		jsonResp = "{OemShipmetList:["
+		jsonResp = "{\"ShipmetList\":\"["
 		for i,val := range OemShipmentIndex{
 			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all OEM Shipments")
 			jsonResp = jsonResp + val
@@ -658,7 +658,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 		}
 	fmt.Println("len(ShipmentIndex) : ")
 	fmt.Println(len(OemShipmentIndex))
-	jsonResp = jsonResp + "}"
+	jsonResp =jsonResp +"]\""+ "}"
 	fmt.Println([]byte(jsonResp))
 	fmt.Println("Fetched All Oem Shipments successfully.")
 	return []byte(jsonResp), nil	
