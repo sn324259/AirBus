@@ -1102,3 +1102,4 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  			return nil, err
  		}
  	}
+}
