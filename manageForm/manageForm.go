@@ -43,6 +43,7 @@ type Form struct{
 	FAA_FormNumber string `json:"FAA_formNumber"`	
 	Quantity string `json:"quantity"`
 	FAA_FormURL string `json:"FAA_formUrl"`
+	File_hash string `json:"fileHash"`
 	User string `json:"user"`					
 	ItemType string `json:"itemType"`
 	Part_number string `json:"part_number"`
@@ -564,6 +565,7 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"FAA_formUrl": "` + res.FAA_FormURL + `" , `+ 
+		`"fileHash": "`+res.fileHash +`" , `+
 		`"user": "` + res.User + `" , `+
 		`"itemType": "` + res.ItemType + `" , `+
 		`"part_number": "` + res.Part_number + `" , `+ 
@@ -586,7 +588,7 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 // ============================================================================================================================
 func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 9 {
+	if len(args) != 10 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
 	fmt.Println("Creating a new Form for Tier-3")
@@ -617,16 +619,20 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 	if len(args[8]) <= 0 {
 		return nil, errors.New("9th argument must be a non-empty string")
 	}
+	if len(args[9]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
 	
 	FAA_formNumber := args[0] // FAA_formNumber or FAA_formNumberber
 	quantity := args[1]
 	FAA_formUrl := args[2]
-	user := args[3]
-	itemType := args[4]
-	part_number := args[5]
-	total_approvedQty := args[6]
-	approvalDate	:= args[7]
-	authorization_number := args[8]
+	fileHash:=args[3]
+	user := args[4]
+	itemType := args[5]
+	part_number := args[6]
+	total_approvedQty := args[7]
+	approvalDate	:= args[8]
+	authorization_number := args[9]
 	userType := "Tier-3"	
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
@@ -646,6 +652,7 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"FAA_formUrl": "` + FAA_formUrl + `" , `+ 
+		`"fileHash": "`+fileHash+ `" , `+ 
 		`"user": "` + user + `" , `+
 		`"itemType": "` + itemType + `" , `+
 		`"part_number": "` + part_number + `" , `+ 
@@ -693,8 +700,8 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	var valIndex Shipment
-	if len(args) != 12 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 12")
+	if len(args) != 13 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 13")
 	}
 	fmt.Println("Creating a new Form for Tier-2")
 	if len(args[0]) <= 0 {
@@ -733,21 +740,25 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
 	
 	
 	FAA_formNumber := args[0]
 	quantity := args[1]
 	FAA_formUrl := args[2]
-	user := args[3]
+	fileHash:=args[3]
+	user := args[4]
 	itemType := args[4]
-	part_number := args[5]
-	total_approvedQty := args[6]
-	approvalDate	:= args[7]
-	authorization_number := args[8]
-	tier3_Form_number := args[9]
-	shipmentId := args[10]
+	part_number := args[6]
+	total_approvedQty := args[7]
+	approvalDate	:= args[8]
+	authorization_number := args[9]
+	tier3_Form_number := args[10]
+	shipmentId := args[11]
 	userType := "Tier-2"
-	chaincodeURL := args[11]
+	chaincodeURL := args[12]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -799,6 +810,7 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"FAA_formUrl": "` + FAA_formUrl + `" , `+ 
+		`"fileHash": "`+fileHash+`" , `+
 		`"user": "` + user + `" , `+
 		`"itemType": "` + itemType + `" , `+
 		`"part_number": "` + part_number + `" , `+ 
@@ -859,8 +871,8 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	var err error
 	var valIndex Shipment
 	var formIndex Form
-	if len(args) != 12 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 12")
+	if len(args) != 13 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 13")
 	}
 	fmt.Println("Creating a new Form for Tier-1")
 	if len(args[0]) <= 0 {
@@ -899,21 +911,25 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
 	
 	
 	FAA_formNumber := args[0] // FAA_formNumber or FAA_formNumberber
 	quantity := args[1]
 	FAA_formUrl := args[2]
-	user := args[3]
-	itemType := args[4]
-	part_number := args[5]
-	total_approvedQty := args[6]
-	approvalDate	:= args[7]
-	authorization_number := args[8]
-	tier2_Form_number := args[9]
-	shipmentId := args[10]
+	fileHash:=args[3]
+	user := args[4]
+	itemType := args[5]
+	part_number := args[6]
+	total_approvedQty := args[7]
+	approvalDate	:= args[8]
+	authorization_number := args[9]
+	tier2_Form_number := args[10]
+	shipmentId := args[11]
 	userType := "Tier-1"
-	chaincodeURL := args[11]
+	chaincodeURL := args[12]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -977,6 +993,7 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"FAA_formUrl": "` + FAA_formUrl + `" , `+ 
+		`"fileHash": "`+fileHash+`" , `+ 
 		`"user": "` + user + `" , `+
 		`"itemType": "` + itemType + `" , `+
 		`"part_number": "` + part_number + `" , `+ 
@@ -1038,8 +1055,8 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	var err error
 	var valIndex Shipment
 	var	formIndex Form
-	if len(args) != 12 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 12")
+	if len(args) != 13 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 13")
 	}
 	fmt.Println("Creating a new Form for OEM")
 	if len(args[0]) <= 0 {
@@ -1078,20 +1095,24 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
 	
 	FAA_formNumber := args[0]
 	quantity := args[1]
 	FAA_formUrl := args[2]
-	user := args[3]
-	itemType := args[4]
-	part_number := args[5]
-	total_approvedQty := args[6]
-	approvalDate	:= args[7]
-	authorization_number := args[8]
-	tier1_Form_number := args[9]
-	shipmentId := args[10]
+	fileHash:=args[3]
+	user := args[4]
+	itemType := args[5]
+	part_number := args[6]
+	total_approvedQty := args[7]
+	approvalDate	:= args[8]
+	authorization_number := args[9]
+	tier1_Form_number := args[10]
+	shipmentId := args[11]
 	userType := "OEM"
-	chaincodeURL := args[11]
+	chaincodeURL := args[12]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -1156,6 +1177,7 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"FAA_formUrl": "` + FAA_formUrl + `" , `+ 
+		`"fileHash": "`+fileHash+ `" , `+
 		`"user": "` + user + `" , `+
 		`"itemType": "` + itemType + `" , `+
 		`"part_number": "` + part_number + `" , `+ 
