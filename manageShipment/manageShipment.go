@@ -45,6 +45,7 @@ type Form struct{
 	FAA_FormNumber string `json:"FAA_formNumber"`	
 	Quantity string `json:"quantity"`
 	FAA_FormURL string `json:"FAA_formUrl"`
+	File_hash string `json:"fileHash"`
 	User string `json:"user"`					
 	ItemType string `json:"itemType"`
 	Part_number string `json:"part_number"`
@@ -87,7 +88,7 @@ type Shipment struct{
 	Actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
 	Vendor_name string `json:"vendor_name"`
 	Tier_type string `json:"tier_type"`
-	Ipfs_hash string `json:"ipfs_hash"`
+	File_hash string `json:"file_hash"`
 	
 }
 // ============================================================================================================================
@@ -728,7 +729,7 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"scheduled_departure_date_ts": "`+res.Scheduled_departure_date_ts+`" , `+
 		`"actual_arrival_date_ts": "`+res.Actual_arrival_date_ts+`" , `+
 		`"vendor_name": "`+res.Vendor_name+`" , `+
-		`"ipfs_hash": "`+res.Ipfs_hash+`" , `+
+		`"file_hash": "`+res.File_hash+`" , `+
 		`"tier_type": "`+res.Tier_type+`" `+
 
 	
@@ -864,7 +865,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  	actual_arrival_date_ts:=args[21]
  	vendor_name:=args[22]
  	tier_type:=args[23]
- 	ipfs_hash:=args[24]
+ 	file_hash:=args[24]
  	
  	
  	
@@ -964,7 +965,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  		`"scheduled_departure_date_ts": "`+scheduled_departure_date_ts+`" , `+
  		`"actual_arrival_date_ts": "`+actual_arrival_date_ts+`" , `+
  		`"vendor_name": "`+vendor_name+`" , `+
- 		`"ipfs_hash": "`+ipfs_hash+`" , `+
+ 		`"file_hash": "`+file_hash+`" , `+
  		`"tier_type": "`+tier_type+`" `+
  
  	    `}`
