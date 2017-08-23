@@ -383,7 +383,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
 	}
 	
-	if args[0]=="Tier3"{
+	if args[0]=="Tier-3"{
 		var Tier3ShipmentIndex []string
 		Tier3ShipmentAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
 		if err != nil {
@@ -423,7 +423,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 	}
 	
 	
-	if args[0]=="Tier2"{
+	if args[0]=="Tier-2"{
 		var Tier2ShipmentIndex []string
 		Tier2ShipmentAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
 		if err != nil {
@@ -462,7 +462,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 		
 	}
 	
-	if args[0]=="Tier1"{
+	if args[0]=="Tier-1"{
 		var Tier1ShipmentIndex []string
 		Tier1ShipmentAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
 		if err != nil {
@@ -502,7 +502,7 @@ func (t *ManageShipment) get_AllShipmentByTier(stub shim.ChaincodeStubInterface,
 	}
 	
 	
-	if args[0]=="Oem"{
+	if args[0]=="OEM"{
 		var OemShipmentIndex []string
 		OemShipmentAsBytes, err := stub.GetState(OemShipmentIndexStr)
 		if err != nil {
@@ -552,7 +552,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
 	}
-	if args[0]=="Tier3"{
+	if args[0]=="Tier-3"{
 		var Tier3ShipmentIndex []string
 		Tier3ShipmentAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
 		if err != nil {
@@ -580,7 +580,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 	return []byte(jsonResp), nil	
 	}
 	
-	if args[0]=="Tier2"{
+	if args[0]=="Tier-2"{
 		var Tier2ShipmentIndex []string
 		Tier2ShipmentAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
 		if err != nil {
@@ -608,7 +608,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 	return []byte(jsonResp), nil	
 	}
 	
-	if args[0]=="Tier1"{
+	if args[0]=="Tier-1"{
 		var Tier1ShipmentIndex []string
 		Tier1ShipmentAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
 		if err != nil {
@@ -636,7 +636,7 @@ func (t *ManageShipment) get_ShipmentId_ByTier(stub shim.ChaincodeStubInterface,
 	return []byte(jsonResp), nil	
 	}
 	
-	if args[0]=="Oem"{
+	if args[0]=="OEM"{
 		var OemShipmentIndex []string
 		OemShipmentAsBytes, err := stub.GetState(OemShipmentIndexStr)
 		if err != nil {
@@ -1003,7 +1003,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  	
  	
  	//get the Shipment index
- 	if tier_type=="Tier3"{
+ 	if tier_type=="Tier-3"{
  		
  		Tier3ShipmentIndexAsBytes, err := stub.GetState(Tier3ShipmentIndexStr)
  		if err != nil {
@@ -1028,7 +1028,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  		}
  	}
  	
- 	if tier_type=="Tier2"{
+ 	if tier_type=="Tier-2"{
  		
  		Tier2ShipmentIndexAsBytes, err := stub.GetState(Tier2ShipmentIndexStr)
  		if err != nil {
@@ -1053,7 +1053,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  		}
  	}
  	
- 	if tier_type=="Tier1"{
+ 	if tier_type=="Tier-1"{
  		
  		Tier1ShipmentIndexAsBytes, err := stub.GetState(Tier1ShipmentIndexStr)
  		if err != nil {
@@ -1078,7 +1078,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
  		}
  	}
  	
- 	if tier_type=="Oem"{
+ 	if tier_type=="OEM"{
  		
  		OemShipmentIndexAsBytes, err := stub.GetState(OemShipmentIndexStr)
  		if err != nil {
