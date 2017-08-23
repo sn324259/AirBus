@@ -70,6 +70,28 @@ type Shipment struct{
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
+	ChaincodeURL string `json:"chaincodeURL"`
+	Ship_frm_country string `json:"ship_frm_country"`
+	Ship_frm_city string `json:"ship_frm_city"`
+	Ship_to_country string `json:"ship_to_country"`
+	Ship_to_city string `json:"ship_to_city"`
+	Truck_details string `json:"truck_details"`
+	Logistics_agency_details string `json:"logistics_agency_details"`
+	Air_ship_way_bill_details string `json:"air_ship_way_bill_way_details"`
+	Flight_vessel_details string `json:"flight_vessel_details"`
+	Departing_port string `json:"departing_port"`
+	Arriving_port string `json:"arriving_port"`
+	Scheduled_departure_date_ts string `json:"scheduled_departure_date_ts"`
+	Actual_arrival_date_ts	string `json:"actual_arriving_date_ts"`
+	Vendor_name string `json:"vendor_name"`
+	Tier_type string `json:"tier_type"`
+	File_hash string `json:"file_hash"`
+	
+	
+	
+	
+	
+	
 }
 // ============================================================================================================================
 // Main - start the chaincode for Form management
