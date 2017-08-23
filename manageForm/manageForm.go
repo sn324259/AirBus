@@ -565,7 +565,7 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"FAA_formUrl": "` + res.FAA_FormURL + `" , `+ 
-		`"fileHash": "`+res.fileHash +`" , `+
+		`"fileHash": "`+res.File_hash +`" , `+
 		`"user": "` + res.User + `" , `+
 		`"itemType": "` + res.ItemType + `" , `+
 		`"part_number": "` + res.Part_number + `" , `+ 
