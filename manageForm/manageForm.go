@@ -230,7 +230,7 @@ func (t *ManageForm) getForm_byID(stub shim.ChaincodeStubInterface, args string)
 
 
 
-func (t *ManageForm) get_FormId_ByTier(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
+func (t *ManageForm) get_FormId_ByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonResp string
 	fmt.Println("Fetching All Form IDS by Tier Type")
 	if len(args) != 1 {
