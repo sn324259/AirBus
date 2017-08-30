@@ -358,6 +358,174 @@ func (t *ManageForm) get_FormId_ByTier(stub shim.ChaincodeStubInterface, args []
 
 
 
+func (t *ManageForm) get_AllFormByTier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp,errResp string
+	fmt.Println("Fetching All Forms by Tier Type")
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments,Expecting one argument")
+	}
+	
+	if args[0]=="Tier-3"{
+		var Tier3FormIndex []string
+		Tier3FormAsBytes, err := stub.GetState(Tier3FormIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier3 Form index")
+		}
+		
+		fmt.Print("Tier3FormAsBytes : ")
+		fmt.Println(Tier3FormAsBytes)
+		json.Unmarshal(Tier3FormAsBytes, &Tier3FormIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier3FormIndex : ")
+		fmt.Println(Tier3FormIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier3FormIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier3 Forms")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier3FormIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(Tier3FormIndex) : ")
+	fmt.Println(len(Tier3FormIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier3 Shipments successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	
+	if args[0]=="Tier-2"{
+		var Tier2FormIndex []string
+		Tier2FormAsBytes, err := stub.GetState(Tier2FormIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier2 Form index")
+		}
+		
+		fmt.Print("Tier2FormAsBytes : ")
+		fmt.Println(Tier2FormAsBytes)
+		json.Unmarshal(Tier2FormAsBytes, &Tier2FormIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier2FormIndex : ")
+		fmt.Println(Tier2FormIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier2FormIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier2 Forms")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier2FormIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(Tier2ShipmentIndex) : ")
+	fmt.Println(len(Tier2FormIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier2 Forms successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	if args[0]=="Tier-1"{
+		var Tier1FormIndex []string
+		Tier1FormAsBytes, err := stub.GetState(Tier1FormIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Tier1 Form index")
+		}
+		
+		fmt.Print("Tier1FormAsBytes : ")
+		fmt.Println(Tier1FormAsBytes)
+		json.Unmarshal(Tier1FormAsBytes, &Tier1FormIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("Tier1FormIndex : ")
+		fmt.Println(Tier1FormIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range Tier1FormIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Tier1 Forms")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(Tier1FormIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(Tier1FormIndex) : ")
+	fmt.Println(len(Tier1FormIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Tier1 Forms successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	
+	
+	if args[0]=="OEM"{
+		var OemFormIndex []string
+		OemFormAsBytes, err := stub.GetState(OEMFormIndexStr)
+		if err != nil {
+			return nil, errors.New("Failed to get Oem Form index")
+		}
+		
+		fmt.Print("OemFormAsBytes : ")
+		fmt.Println(OemFormAsBytes)
+		json.Unmarshal(OemFormAsBytes, &OemFormIndex)								//un stringify it aka JSON.parse()
+		fmt.Print("OemFormIndex : ")
+		fmt.Println(OemFormIndex)
+		
+		
+		
+		jsonResp = "{"
+		for i,val := range OemFormIndex{
+			fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for all Oem Forms")
+			valueAsBytes, err := stub.GetState(val)
+			if err != nil {
+				errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+				return nil, errors.New(errResp)
+			}
+			fmt.Print("valueAsBytes : ")
+			fmt.Println(valueAsBytes)
+			jsonResp = jsonResp + "\""+ val + "\":" + string(valueAsBytes[:])
+			if i < len(OemFormIndex)-1 {
+				jsonResp = jsonResp + ","
+			}
+		}
+	fmt.Println("len(OEMFormIndex) : ")
+	fmt.Println(len(OemFormIndex))
+	jsonResp = jsonResp + "}"
+	fmt.Println([]byte(jsonResp))
+	fmt.Println("Fetched All Oem Forms successfully.")
+	return []byte(jsonResp), nil	
+		
+	}
+	return nil,errors.New("Cante fetch forms by tier Type fatal error")
+}
+	
+
 
 
 
