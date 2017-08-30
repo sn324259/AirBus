@@ -196,6 +196,8 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 		return t.get_AllForm(stub, args)
 	} else if function == "get_FormId_ByTier" {													//Read a Shipment by Buyer
 		return t.get_FormId_ByTier(stub, args)
+	}else if function == "get_AllFormByTier" {													//Read a Shipment by Buyer
+		return t.get_AllFormByTier(stub, args)
 	}
 	
 
